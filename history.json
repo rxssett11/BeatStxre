@@ -1,0 +1,132 @@
+[
+  {
+    "type": "download",
+    "source": "https://www.tiktok.com/@maxxywav/video/7662146843190562068",
+    "file": "/files/sample_f015c685_166bpm_Cminor.wav",
+    "midi": "/files/sample_f015c685_166bpm_Cminor.mid",
+    "analysis": {
+      "key": "C",
+      "scale": "minor",
+      "confidence": 0.792,
+      "bpm": 166.5
+    },
+    "date": "2026-08-18 10:29"
+  },
+  {
+    "type": "download",
+    "source": "https://www.tiktok.com/@tracklibsamples/video/7670559900950367510",
+    "file": "/files/sample_e81e1db1_76bpm_Dminor.wav",
+    "midi": "/files/sample_e81e1db1_76bpm_Dminor.mid",
+    "analysis": {
+      "key": "D",
+      "scale": "minor",
+      "confidence": 0.882,
+      "bpm": 75.8
+    },
+    "date": "2026-08-18 10:26"
+  },
+  {
+    "type": "download",
+    "source": "https://www.facebook.com/reel/26893716630244761",
+    "file": "/files/sample_8b0c9ba3_134bpm_Bminor.wav",
+    "midi": "/files/sample_8b0c9ba3_134bpm_Bminor.mid",
+    "analysis": {
+      "key": "B",
+      "scale": "minor",
+      "confidence": 0.881,
+      "bpm": 134.0
+    },
+    "date": "2026-08-18 10:26"
+  },
+  {
+    "type": "download",
+    "source": "https://www.instagram.com/p/B14V3YbHrDb/",
+    "file": "/files/sample_574e086b_116bpm_Gminor.wav",
+    "midi": "/files/sample_574e086b_116bpm_Gminor.mid",
+    "analysis": {
+      "key": "G",
+      "scale": "minor",
+      "confidence": 0.858,
+      "bpm": 115.5
+    },
+    "date": "2026-08-18 10:26"
+  },
+  {
+    "type": "download",
+    "source": "https://www.tiktok.com/@cusickprod/video/7617017761893534998",
+    "file": "/files/sample_4177a584_94bpm_Gminor.wav",
+    "midi": "/files/sample_4177a584_94bpm_Gminor.mid",
+    "analysis": {
+      "key": "G",
+      "scale": "minor",
+      "confidence": 0.903,
+      "bpm": 94.1
+    },
+    "date": "2026-08-18 10:24"
+  },
+  {
+    "type": "download",
+    "source": "https://www.facebook.com/reel/26893716630244761",
+    "file": "/files/sample_4fa025f1_134bpm_Bminor.wav",
+    "midi": null,
+    "analysis": {
+      "key": "B",
+      "scale": "minor",
+      "confidence": 0.881,
+      "bpm": 134.0
+    },
+    "date": "2026-08-18 10:14"
+  },
+  {
+    "type": "download",
+    "source": "https://www.instagram.com/p/B14V3YbHrDb/",
+    "file": "/files/sample_bbfa8714_116bpm_Gminor.wav",
+    "midi": null,
+    "analysis": {
+      "key": "G",
+      "scale": "minor",
+      "confidence": 0.858,
+      "bpm": 115.5
+    },
+    "date": "2026-08-18 10:13"
+  },
+  {
+    "type": "download",
+    "source": "https://www.tiktok.com/@v1c3beats/video/7348534250079145221?q=samples%20para%20usar&t=1787069023083",
+    "file": "/files/sample_5e53bc81_178bpm_Csharpminor.wav",
+    "midi": null,
+    "analysis": {
+      "key": "C#",
+      "scale": "minor",
+      "confidence": 0.814,
+      "bpm": 178.2
+    },
+    "date": "2026-08-18 10:12"
+  },
+  {
+    "type": "download",
+    "source": "https://www.tiktok.com/@prodsaintluca/video/7610120268303928599?q=samples%20para%20usar&t=1787021410934",
+    "file": "/files/sample_ae87a1bf_99bpm_Csharpminor.wav",
+    "midi": null,
+    "analysis": {
+      "key": "C#",
+      "scale": "minor",
+      "confidence": 0.825,
+      "bpm": 99.1
+    },
+    "date": "2026-08-17 21:09"
+  },
+  {
+    "type": "upload",
+    "source": "TRKTRN_KATO_129_Vocal_Lead_Opera_High_Mia_Bella_Fmin.wav",
+    "file": "/files/sample_9750d265_110bpm_Fminor.wav",
+    "midi": "/files/sample_9750d265_110bpm_Fminor.mid",
+    "analysis": {
+      "key": "F",
+      "scale": "minor",
+      "confidence": 0.667,
+      "bpm": 110.2
+    },
+    "date": "2026-08-17 12:52"
+  }
+]

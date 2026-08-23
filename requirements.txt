@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+python-multipart
+httpx
+requests
+python-dotenv
+essentia
+basic-pitch
+yt-dlp
+sqlalchemy
+pymysql

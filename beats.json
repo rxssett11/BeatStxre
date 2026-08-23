@@ -1,0 +1,57 @@
+[
+  {
+    "id": "a6312c2f",
+    "beat_name": "Trapical 80bpm F @rxssettprxd",
+    "genre": "Trap",
+    "filename": "Trapical 80bpm F @rxssettprxd.mp3",
+    "file": "/beat-files/Trap/Trapical 80bpm F @rxssettprxd.mp3",
+    "status": "vendido",
+    "nextcloud_synced": true,
+    "date": "2026-08-20 11:56"
+  },
+  {
+    "id": "b2c2712a",
+    "beat_name": "Soledad 85bpm C#m @rxssettprxd.mp3",
+    "genre": "Boom Bap",
+    "filename": "Soledad 85bpm C#m @rxssettprxd.mp3",
+    "file": "/beat-files/Boom Bap/Soledad 85bpm C#m @rxssettprxd.mp3",
+    "status": "disponible",
+    "nextcloud_synced": true,
+    "date": "2026-08-20 11:53"
+  },
+  {
+    "id": "92237805",
+    "beat_name": "sesion5-crudo",
+    "genre": "Boom Bap",
+    "filename": "sesion5-crudo_92237805.mp3",
+    "file": "/beat-files/Boom Bap/sesion5-crudo_92237805.mp3",
+    "status": "disponible",
+    "nextcloud_synced": true,
+    "date": "2026-08-14 11:36"
+  },
+  {
+    "id": "d9b4e146",
+    "beat_name": "Trapical 80bpm F @rxssettprxd.mp3",
+    "filename": "Trapical_80bpm_F__rxssettprxd_mp3_d9b4e146.mp3",
+    "file": "/beat-files/Trapical_80bpm_F__rxssettprxd_mp3_d9b4e146.mp3",
+    "nextcloud_synced": true,
+    "date": "2026-08-14 11:02"
+  },
+  {
+    "id": "bc2e238c",
+    "beat_name": "Diablo 80bpm F#m @rxssettprxd.wav",
+    "filename": "Diablo_80bpm_F_m__rxssettprxd_wav_bc2e238c.wav",
+    "file": "/beat-files/Diablo_80bpm_F_m__rxssettprxd_wav_bc2e238c.wav",
+    "nextcloud_synced": true,
+    "date": "2026-08-13 23:25",
+    "status": "vendido"
+  },
+  {
+    "id": "51fe4d45",
+    "beat_name": "Caps 82bpm Em @rxssettprxd.wav",
+    "filename": "Caps_82bpm_Em__rxssettprxd_wav_51fe4d45.wav",
+    "file": "/beat-files/Caps_82bpm_Em__rxssettprxd_wav_51fe4d45.wav",
+    "nextcloud_synced": true,
+    "date": "2026-08-13 19:45"
+  }
+]

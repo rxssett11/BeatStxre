@@ -1,0 +1,19 @@
+# Secretos
+.env
+cookies.txt
+
+# Datos y archivos generados (no deben ir al repo)
+beats/*
+!beats/.gitkeep
+downloads/*
+!downloads/.gitkeep
+licenses/*
+!licenses/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Sistema
+.DS_Store

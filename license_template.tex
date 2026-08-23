@@ -1,0 +1,110 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,top=2.5cm,bottom=2.5cm,left=2.5cm,right=3.2cm]{geometry}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{eso-pic}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{xcolor}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\small Página \thepage\ de \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0pt}
+
+\AddToShipoutPictureFG{%
+  \AtPageUpperLeft{%
+    \hspace*{\paperwidth}%
+    \raisebox{-0.55\paperheight}{%
+      \rotatebox{90}{%
+        \parbox{0.5\paperheight}{\scriptsize\color{gray!70}\raggedright
+          CONTRATO DE LICENCIA EXCLUSIVA Y DE CESIÓN DE DERECHOS\\
+          CERTIFICADO OFICIAL DE LICENCIA EXCLUSIVA - Emitido por @@PRODUCER_ALIAS@@
+        }%
+      }%
+    }%
+  }%
+}
+
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+{\Large\bfseries CONTRATO DE LICENCIA EXCLUSIVA Y DE CESIÓN DE DERECHOS}
+
+\vspace{14pt}
+
+\begin{flushright}
+\textbf{FECHA DE VENTA:} @@DATE@@\\[6pt]
+\textbf{No. ORDEN:} @@ORDER_ID@@\\[6pt]
+\textbf{PRODUCTOR / VENDEDOR:} @@PRODUCER_ALIAS@@ (@@PRODUCER_NAME@@)\\[6pt]
+\textbf{ARTISTA / COMPRADOR:} @@ARTISTIC_NAME@@ (@@REAL_NAME@@)\\[6pt]
+\textbf{TÍTULO DEL BEAT / INSTRUMENTAL:} @@BEAT_NAME@@\\[6pt]
+\textbf{PAGO Y RESUMEN DE TRANSACCIÓN:} @@PRICE@@ (Pago único por cesión exclusiva)
+\end{flushright}
+
+\vspace{16pt}
+
+RESUMEN DE TÉRMINOS Y CONDICIONES
+
+\vspace{10pt}
+
+\textbf{1. \quad PROPIEDAD EXCLUSIVA Y DERECHOS SOBRE EL MASTER}
+
+\vspace{4pt}
+El Productor otorga al Artista el derecho único y exclusivo para utilizar, grabar, adaptar, publicar y comercializar la instrumental titulada \textbf{``@@BEAT_NAME@@''}
+
+\vspace{12pt}
+
+\textbf{2. \quad DERECHOS DE DISTRIBUCIÓN Y EXPLOTACIÓN COMERCIAL}
+
+\vspace{4pt}
+El Artista recibe derechos comerciales ilimitados para la distribución de la obra derivada en todas las plataformas digitales de streaming (Spotify, Apple Music, YouTube, Amazon Music, Tidal, etc.), ventas en formatos físicos (CDs, Vinilos), emisiones de radio, presentaciones en vivo y monetización de videos, sin la obligación de pagar regalías posteriores al Productor por las ventas o reproducciones de la grabación master.
+
+\vspace{12pt}
+
+\textbf{3. \quad CRÉDITOS Y RECONOCIMIENTO}
+
+\vspace{4pt}
+En todos los lanzamientos públicos, metadatos, registros de distribución digital y créditos visuales, el Artista se obliga a otorgar el crédito correspondiente al Productor utilizando el siguiente formato:
+
+\vspace{6pt}
+\textbf{Prod. por @@PRODUCER_ALIAS@@}
+
+\vspace{12pt}
+
+\textbf{4. \quad DERECHOS MORALES Y AUTORÍA}
+
+\vspace{4pt}
+El Productor conserva en todo momento los derechos morales inalienables sobre la composición musical original como creador/beatmaker, de acuerdo con la Ley Federal del Derecho de Autor de México.
+
+\vspace{12pt}
+
+\textbf{5. \quad INTRANSFERIBILIDAD DE LA LICENCIA}
+
+\vspace{4pt}
+Los derechos, licencias y autorizaciones concedidos en este contrato son estrictamente personales, totales, exclusivos e intransferibles. Quedan vinculados únicamente al Artista/Comprador identificado en este documento (\textbf{@@ARTISTIC_NAME@@ / @@REAL_NAME@@}) como titular del pago. La presente licencia no podrá ser vendida, cedida, sublicenciada, transferida ni regalada a terceros bajo ninguna circunstancia.
+
+\vspace{20pt}
+
+\begin{center}
+\textbf{VERIFICACIÓN Y VALIDEZ ELECTRÓNICA}
+\end{center}
+
+\vspace{10pt}
+
+El presente acuerdo se genera y valida de manera electrónica a través de la confirmación del pago de \textbf{@@PRICE@@@@PAYMENT_NOTE@@} y el consentimiento mutuo expresado por medios de comunicación digital.
+
+\vspace{8pt}
+\textbf{\small No se requiere firma física para su validez legal y exigibilidad conforme a la legislación comercial vigente.}
+
+\vspace{30pt}
+
+\begin{center}
+\textbf{CERTIFICADO OFICIAL DE LICENCIA EXCLUSIVA}
+
+\vspace{8pt}
+\textbf{Emitido por @@PRODUCER_ALIAS@@}
+\end{center}
+
+\end{document}

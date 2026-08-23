@@ -1,0 +1,34 @@
+services:
+  prxdbeats:
+    build: .
+    container_name: prxdbeats
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./downloads:/app/downloads
+      - ./beats:/app/beats
+      - ./licenses:/app/licenses
+      - ./history.json:/app/history.json
+      - ./beats.json:/app/beats.json
+      - ./licenses.json:/app/licenses.json
+      - ./cookies.txt:/app/cookies.txt:ro
+    networks:
+      - proxy-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prxdbeats.rule=Host(`beatstxre.ismaelrxssett.cloud`)"
+      - "traefik.http.routers.prxdbeats.entrypoints=websecure"
+      - "traefik.http.routers.prxdbeats.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.prxdbeats.service=prxdbeats"
+      - "traefik.http.routers.prxdbeats-panel.rule=Host(`panelstxre.ismaelrxssett.cloud`)"
+      - "traefik.http.routers.prxdbeats-panel.entrypoints=websecure"
+      - "traefik.http.routers.prxdbeats-panel.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.prxdbeats-panel.service=prxdbeats"
+      - "traefik.http.routers.prxdbeats-panel.middlewares=prxdbeats-auth"
+      - "traefik.http.middlewares.prxdbeats-auth.basicauth.users=rxssett:$$2y$$05$$JtJYz3uA/Kw4JYS7De5n6uFDBK9/hJd3Tr51i6Y9Th7cANvqeAJAi"
+      - "traefik.http.services.prxdbeats.loadbalancer.server.port=8000"
+
+networks:
+  proxy-network:
+    external: true
