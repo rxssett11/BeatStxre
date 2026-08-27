@@ -9,3 +9,4 @@ basic-pitch
 yt-dlp
 sqlalchemy
 pymysql
+jinja2

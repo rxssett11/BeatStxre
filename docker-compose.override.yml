@@ -1,0 +1,8 @@
+services:
+  prxdbeats:
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    volumes:
+      - ./app.py:/app/app.py
+      - ./db.py:/app/db.py
+      - ./templates:/app/templates
+      - ./assets:/app/assets

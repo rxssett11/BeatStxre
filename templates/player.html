@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="/assets/img/icon.svg">
+    <link rel="alternate icon" href="/assets/img/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Figtree:ital,wght@0,300..900;1,300..900&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"
+        rel="stylesheet">
+    <title>BeatStxre - rxssettprxd</title>
+    <style>
+        :root {
+            --red: #e50914;
+            --red-dark: #9c060c;
+            --bg: #0a0a0a;
+            --panel: #141414;
+            --panel-light: #1f1f1f;
+            --border: #262626;
+            --text: #eee;
+            --text-dim: #888;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Bebas Neue', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding-bottom: 110px;
+        }
+
+        #navbar {
+            display: flex;
+            align-items: center;
+            background: var(--panel);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        #navbar .nav-brand {
+            color: var(--red);
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        #player-main {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        h2 {
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        #genre-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .genre-tab {
+            background: var(--panel-light);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 8px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all .2s;
+        }
+
+        .genre-tab:hover {
+            color: #fff;
+            border-color: #444;
+        }
+
+        .genre-tab.active {
+            background: var(--red);
+            color: #fff;
+            border-color: var(--red);
+        }
+
+        .beat-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            transition: background 0.2s;
+        }
+
+        .beat-card:hover {
+            background: var(--panel-light);
+        }
+
+        .beat-card.playing {
+            border-color: var(--red);
+            background: #1a0d0d;
+        }
+
+        .beat-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .play-btn-item {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--red);
+            border: none;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .beat-title {
+            font-weight: 400;
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .beat-tags {
+            display: flex;
+            gap: 6px;
+            margin-top: 4px;
+            align-items: center;
+            font-size: 1.5rem;
+        }
+
+        .beat-genre {
+            font-size: 11px;
+            color: var(--red);
+            background: rgba(229, 9, 20, 0.15);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .beat-bpm {
+            font-size: 11px;
+            color: var(--text-dim);
+            background: rgba(255, 255, 255, 0.06);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .status-badge {
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .status-disponible {
+            background: #1b381e;
+            color: #4ec960;
+        }
+
+        .status-apartado {
+            background: #382c1b;
+            color: #e5a93c;
+        }
+
+        #bottom-player {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: #121212;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 100;
+            gap: 20px;
+        }
+
+        .player-track-info {
+            width: 220px;
+            flex-shrink: 0;
+        }
+
+        .player-track-title {
+            font-weight: bold;
+            color: #fff;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .player-track-sub {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        .ctrl-btn svg,
+        .main-play-btn svg,
+        .play-btn-item svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .main-play-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .play-btn-item svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .beat-card {
+            cursor: pointer;
+        }
+
+        .beat-card .buy-btn {
+            position: relative;
+            z-index: 2;
+        }
+
+        .player-center {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            max-width: 500px;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .ctrl-btn {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px;
+            transition: color 0.2s;
+        }
+
+        .ctrl-btn:hover {
+            color: #fff;
+        }
+
+        .ctrl-btn.active {
+            color: var(--red);
+        }
+
+        .main-play-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #fff;
+            border: none;
+            color: #000;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .main-play-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .progress-wrapper {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-wrapper span {
+            font-size: 11px;
+            color: var(--text-dim);
+            flex-shrink: 0;
+            width: 32px;
+        }
+
+        .progress-wrapper span:last-child {
+            text-align: right;
+        }
+
+        .progress-bar {
+            flex: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .progress-bar::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .progress-bar::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .ctrl-btn svg {
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .ctrl-btn svg path[fill] {
+            fill: currentColor;
+            stroke: none;
+        }
+
+        .waveform-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        #waveform {
+            width: 100%;
+            height: 45px;
+            cursor: pointer;
+        }
+
+        .time-container {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+
+        .player-right {
+            width: 120px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .volume-slider {
+            width: 70px;
+            accent-color: var(--red);
+        }
+
+        @media (max-width: 640px) {
+            #navbar {
+                padding: 12px 16px;
+            }
+
+            #player-main {
+                margin: 20px auto;
+                padding: 0 14px;
+            }
+
+            h2 {
+                font-size: 20px;
+                margin-bottom: 14px;
+            }
+
+            #genre-tabs {
+                gap: 6px;
+                margin-bottom: 18px;
+            }
+
+            .genre-tab {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .beat-card {
+                padding: 12px 14px;
+            }
+
+            .beat-left {
+                gap: 10px;
+            }
+
+            .play-btn-item {
+                width: 34px;
+                height: 34px;
+                font-size: 12px;
+            }
+
+            .beat-title {
+                font-size: 13px;
+            }
+
+            .beat-genre,
+            .status-badge {
+                font-size: 10px;
+            }
+
+            .beat-bpm {
+                font-size: 11px;
+                color: var(--text-dim);
+                background: rgba(255, 255, 255, 0.06);
+                padding: 2px 8px;
+                border-radius: 10px;
+            }
+
+            body {
+                padding-bottom: 130px;
+            }
+
+            #bottom-player {
+                flex-direction: column;
+                height: auto;
+                padding: 10px 14px 12px;
+                gap: 8px;
+            }
+
+            .player-track-info {
+                width: 100%;
+                text-align: center;
+            }
+
+            .player-center {
+                width: 100%;
+                order: 2;
+            }
+
+            .player-right {
+                width: 100%;
+                justify-content: center;
+                order: 3;
+            }
+
+            .volume-slider {
+                width: 120px;
+            }
+
+            .main-play-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 14px;
+            }
+        }
+
+        .buy-btn {
+            background: #1b381e;
+            color: #fff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .buy-btn:hover {
+            background: var(--red-dark);
+        }
+
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 20px;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal-box {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 24px;
+            max-width: 380px;
+            width: 100%;
+        }
+
+        .modal-box h3 {
+            margin-top: 0;
+            color: #fff;
+        }
+
+        .modal-box .modal-beat {
+            color: var(--red);
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+
+        .modal-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .modal-actions a,
+        .modal-actions button {
+            display: block;
+            text-align: center;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .whatsapp-btn {
+            background: #25d366;
+            color: #fff;
+        }
+
+        .form-toggle-btn {
+            background: var(--panel-light);
+            color: #fff;
+            border: 1px solid var(--border);
+        }
+
+        .modal-form {
+            display: none;
+            margin-top: 12px;
+        }
+
+        .modal-form.open {
+            display: block;
+        }
+
+        .modal-form input,
+        .modal-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 6px 0;
+            background: var(--panel-light);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 6px;
+            font-family: inherit;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 14px;
+            right: 18px;
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 20px;
+            cursor: pointer;
+            width: auto;
+            padding: 0;
+        }
+
+        .modal-box {
+            position: relative;
+        }
+
+        .submit-lead-btn {
+            background: var(--red);
+            color: #fff;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 4px;
+            transition: background 0.2s;
+        }
+
+        .submit-lead-btn:hover {
+            background: var(--red-dark);
+        }
+
+        #hero {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px 0;
+            overflow: hidden;
+            background: var(--bg);
+        }
+
+        #hero-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 1200px;
+            height: 800px;
+            background: radial-gradient(ellipse, rgba(229, 9, 20, 0.25) 0%, transparent 70%);
+            filter: blur(10px);
+            pointer-events: none;
+        }
+
+        #hero-logo {
+            position: relative;
+            max-width: 1040px;
+            width: 90%;
+            height: auto;
+            filter: drop-shadow(0 0 18px rgba(229, 9, 20, 0.45));
+        }
+
+        #player-main {
+            position: relative;
+            max-width: 800px;
+            margin: -70px auto 0;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 16px 16px 0 0;
+            padding: 24px 20px 0;
+            z-index: 2;
+        }
+
+        .titulo-player {
+            font-size: 2rem;
+            display: flex;
+            justify-content: center;
+            text-align: center;
+        }
+
+        @media (max-width: 640px) {
+            #hero {
+                padding: 30px 16px 0;
+            }
+
+            #hero-logo {
+                max-width: 340px;
+            }
+
+            #player-main {
+                margin-top: -40px;
+                border-radius: 12px 12px 0 0;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .beat-tags {
+                flex-wrap: wrap;
+            }
+
+            .player-track-title {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body oncontextmenu="return false;">
+
+    <div id="navbar">
+        <div class="nav-brand"><img src="/assets/img/logo.png" alt="Logo" style="height: 32px; vertical-align: middle;">
+        </div>
+    </div>
+
+    <div id="hero">
+        <div id="hero-glow"></div>
+        <img src="/assets/img/logo.png" alt="rxssettprxd" id="hero-logo">
+    </div>
+
+    <div id="player-main">
+
+        <div id="player-main">
+            <div class="titulo-player">
+                <h2>Catálogo de beats</h2>
+            </div>
+            <div id="genre-tabs">
+                <button class="genre-tab active" data-genre="">Todos</button>
+                <button class="genre-tab" data-genre="Boom Bap">Boom Bap</button>
+                <button class="genre-tab" data-genre="Trap">Trap</button>
+                <button class="genre-tab" data-genre="Reggaeton">Reggaetón</button>
+            </div>
+            <div id="beat-list">Cargando...</div>
+        </div>
+
+        <div id="bottom-player">
+            <div class="player-track-info">
+                <div id="current-title" class="player-track-title">Selecciona un beat</div>
+                <div id="current-genre" class="player-track-sub">--</div>
+            </div>
+
+            <div class="player-center">
+                <div class="player-controls">
+                    <button id="shuffle-btn" class="ctrl-btn" onclick="toggleShuffle()" title="Aleatorio">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M17 3l4 4-4 4M3 7h5l3.5 5M21 17h-5l-1.5-2M3 17l4 4-4-4M3 17l4-4" />
+                        </svg>
+                    </button>
+                    <button class="ctrl-btn" onclick="playPrev()" title="Anterior">
+                        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                            <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+                        </svg>
+                    </button>
+                    <button id="main-play-toggle" class="main-play-btn" onclick="togglePlay()">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </button>
+                    <button class="ctrl-btn" onclick="playNext()" title="Siguiente">
+                        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                            <path d="M16 6h2v12h-2zM6 6l8.5 6L6 18z" />
+                        </svg>
+                    </button>
+                    <button id="repeat-btn" class="ctrl-btn" onclick="toggleRepeat()" title="Repetir">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="progress-wrapper">
+                    <span id="time-current">0:00</span>
+                    <input type="range" id="progress-bar" class="progress-bar" min="0" max="100" value="0" step="0.1">
+                    <span id="time-total">0:00</span>
+                </div>
+            </div>
+
+            <div class="player-right">
+                <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:var(--text-dim);flex-shrink:0;">
+                    <path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2a4.5 4.5 0 00-2.5-4v8a4.5 4.5 0 002.5-4z" />
+                </svg>
+                <input type="range" class="volume-slider" min="0" max="1" step="0.05" value="1"
+                    oninput="setVolume(this.value)">
+            </div>
+        </div>
+
+        <audio id="audio-player" preload="metadata"></audio>
+
+        <div id="contact-modal" class="modal-overlay">
+            <div class="modal-box">
+                <button class="modal-close" onclick="closeContactModal()">✕</button>
+                <h3>¿Te interesa este beat?</h3>
+                <div class="modal-beat" id="modal-beat-name"></div>
+                <div class="modal-actions">
+                    <button id="whatsapp-link" class="whatsapp-btn" onclick="openWhatsApp()">Escribir por
+                        WhatsApp</button>
+                    <button class="form-toggle-btn" onclick="toggleContactForm()">Dejar mis datos</button>
+                </div>
+                <div class="modal-form" id="contact-form">
+                    <input type="text" id="lead-name" placeholder="Tu nombre">
+                    <input type="text" id="lead-contact" placeholder="WhatsApp, email o Instagram">
+                    <textarea id="lead-message" rows="2" placeholder="Mensaje (opcional)"></textarea>
+                    <button class="submit-lead-btn" onclick="submitLead()">Enviar</button>
+                    <div id="lead-result" style="font-size: 12px; margin-top: 8px; color: var(--text-dim);"></div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            let currentGenre = "";
+            let beatsData = [];
+            let currentBeatIndex = -1;
+
+            const audio = document.getElementById('audio-player');
+            const progressBar = document.getElementById('progress-bar');
+            let isSeeking = false;
+            let shuffleOn = false;
+            let repeatOn = false;
+
+            audio.addEventListener('timeupdate', () => {
+                if (!isSeeking && audio.duration) {
+                    progressBar.value = (audio.currentTime / audio.duration) * 100;
+                }
+                document.getElementById('time-current').textContent = formatTime(audio.currentTime);
+            });
+
+            audio.addEventListener('loadedmetadata', () => {
+                document.getElementById('time-total').textContent = formatTime(audio.duration);
+            });
+
+            audio.addEventListener('ended', () => {
+                if (repeatOn) {
+                    audio.currentTime = 0;
+                    audio.play();
+                    return;
+                }
+                playNext();
+            });
+
+            progressBar.addEventListener('input', () => { isSeeking = true; });
+            progressBar.addEventListener('change', () => {
+                if (audio.duration) audio.currentTime = (progressBar.value / 100) * audio.duration;
+                isSeeking = false;
+            });
+
+            function playBeat(index) {
+                if (currentBeatIndex === index) { togglePlay(); return; }
+                currentBeatIndex = index;
+                const beat = beatsData[index];
+
+                audio.src = beat.preview_file || beat.file;
+                audio.play();
+
+                document.getElementById('current-title').textContent = beat.beat_name;
+                document.getElementById('current-genre').textContent = beat.genre || 'Sin género';
+                updatePlayIcon(true);
+
+                loadBeats();
+            }
+
+            function togglePlay() {
+                if (currentBeatIndex === -1) return;
+                if (audio.paused) {
+                    audio.play();
+                    updatePlayIcon(true);
+                } else {
+                    audio.pause();
+                    updatePlayIcon(false);
+                }
+                loadBeats();
+            }
+
+            function updatePlayIcon(playing) {
+                const btn = document.getElementById('main-play-toggle');
+                btn.innerHTML = playing
+                    ? '<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>'
+                    : '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+            }
+
+            function playNext() {
+                if (!beatsData.length) return;
+                const nextIndex = shuffleOn
+                    ? Math.floor(Math.random() * beatsData.length)
+                    : (currentBeatIndex + 1 < beatsData.length ? currentBeatIndex + 1 : 0);
+                playBeat(nextIndex);
+            }
+
+            function playPrev() {
+                if (!beatsData.length) return;
+                const prevIndex = currentBeatIndex - 1 >= 0 ? currentBeatIndex - 1 : beatsData.length - 1;
+                playBeat(prevIndex);
+            }
+
+            function toggleShuffle() {
+                shuffleOn = !shuffleOn;
+                document.getElementById('shuffle-btn').classList.toggle('active', shuffleOn);
+            }
+
+            function toggleRepeat() {
+                repeatOn = !repeatOn;
+                document.getElementById('repeat-btn').classList.toggle('active', repeatOn);
+            }
+
+            function setVolume(val) {
+                audio.volume = val;
+            }
+
+            function formatTime(sec) {
+                if (isNaN(sec)) return "0:00";
+                const m = Math.floor(sec / 60);
+                const s = Math.floor(sec % 60);
+                return `${m}:${s < 10 ? '0' : ''}${s}`;
+            }
+
+            document.querySelectorAll('.genre-tab').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.genre-tab').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentGenre = btn.dataset.genre;
+                    loadBeats();
+                });
+            });
+
+            async function loadBeats() {
+                const list = document.getElementById('beat-list');
+                let url = '/beats?include_sold=false';
+                if (currentGenre) {
+                    url += `&genre=${encodeURIComponent(currentGenre)}`;
+                }
+
+                const res = await fetch(url);
+                beatsData = await res.json();
+
+                if (!beatsData.length) { list.innerHTML = "<div style='color:#888;'>No hay beats disponibles.</div>"; return; }
+
+                list.innerHTML = beatsData.map((b, idx) => {
+                    const status = b.status || 'disponible';
+                    const isPlaying = currentBeatIndex === idx && !audio.paused;
+                    const bpmScale = (b.bpm || b.key_scale)
+                        ? `<span class="beat-bpm">${b.bpm ? b.bpm + ' BPM' : ''}${b.bpm && b.key_scale ? ' · ' : ''}${b.key_scale || ''}</span>`
+                        : '';
+                    const playIcon = isPlaying
+                        ? '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>'
+                        : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+                    return `
+          <div class="beat-card ${currentBeatIndex === idx ? 'playing' : ''}" onclick="playBeat(${idx})">
+            <div class="beat-left">
+              <button class="play-btn-item" onclick="event.stopPropagation(); playBeat(${idx})">
+                ${playIcon}
+              </button>
+              <div>
+                <div class="beat-title">${b.beat_name}</div>
+                <div class="beat-tags">
+                  <span class="beat-genre">${b.genre || 'Sin género'}</span>
+                  ${bpmScale}
+                  <!---
+                  <span class="status-badge status-${status}">${status}</span>
+                  --->
+                </div>
+              </div>
+            </div>
+            <button class="buy-btn" onclick="event.stopPropagation(); openContactModal('${b.id}', '${b.beat_name.replace(/'/g, "\\'")}')">Comprar</button>
+          </div>
+        `;
+                }).join("");
+            }
+
+            let modalBeatId = null;
+            let modalBeatName = null;
+            const WHATSAPP_NUMBER = "{{ whatsapp_number }}";
+            let whatsappUrl = "";
+
+            function openContactModal(beatId, beatName) {
+                modalBeatId = beatId;
+                modalBeatName = beatName;
+                document.getElementById('modal-beat-name').textContent = beatName;
+
+                const msg = encodeURIComponent(`Hola! Me interesa el beat "${beatName}", ¿me das info?`);
+                whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
+
+                document.getElementById('contact-form').classList.remove('open');
+                document.getElementById('lead-result').textContent = '';
+                document.getElementById('contact-modal').classList.add('open');
+            }
+
+            function openWhatsApp() {
+                const form = new FormData();
+                form.append('beat_id', modalBeatId);
+                form.append('name', 'Vía WhatsApp');
+                form.append('contact', 'N/A');
+                form.append('message', 'Dio clic en Escribir por WhatsApp');
+
+                fetch('/beats/interest', { method: 'POST', body: form }).catch(() => { });
+
+                window.open(whatsappUrl, '_blank');
+            }
+
+            function closeContactModal() {
+                document.getElementById('contact-modal').classList.remove('open');
+            }
+
+            function toggleContactForm() {
+                document.getElementById('contact-form').classList.toggle('open');
+            }
+
+            async function submitLead() {
+                const name = document.getElementById('lead-name').value;
+                const contact = document.getElementById('lead-contact').value;
+                const message = document.getElementById('lead-message').value;
+                const out = document.getElementById('lead-result');
+
+                if (!name || !contact) { out.textContent = "Falta tu nombre o un dato de contacto."; return; }
+
+                out.textContent = "Enviando...";
+                const form = new FormData();
+                form.append('beat_id', modalBeatId);
+                form.append('name', name);
+                form.append('contact', contact);
+                form.append('message', message);
+
+                const res = await fetch('/beats/interest', { method: 'POST', body: form });
+                if (res.ok) {
+                    out.textContent = "¡Listo! Te contactaremos pronto.";
+                    document.getElementById('lead-name').value = '';
+                    document.getElementById('lead-contact').value = '';
+                    document.getElementById('lead-message').value = '';
+                } else {
+                    out.textContent = "Hubo un error, intenta de nuevo.";
+                }
+            }
+
+            loadBeats();
+        </script>
+</body>
+
+</html>

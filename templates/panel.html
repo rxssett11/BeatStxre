@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="/assets/img/icon.svg">
+    <link rel="alternate icon" href="/assets/img/logo.png">
+    <title>Panel - BeatStxre</title>
+    <style>
+        :root {
+            --red: #e50914;
+            --red-dark: #9c060c;
+            --bg: #0a0a0a;
+            --panel: #161616;
+            --panel-light: #1f1f1f;
+            --border: #2a2a2a;
+            --text: #eee;
+            --text-dim: #999;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        #navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--panel);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        #navbar .nav-brand {
+            color: var(--red);
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        #navbar .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 14px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        #navbar .nav-links a:hover,
+        #navbar .nav-links a.active {
+            color: #fff;
+            background: var(--red);
+        }
+
+        #layout {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+        }
+
+        #sidebar {
+            width: 300px;
+            background: var(--panel);
+            border-right: 1px solid var(--border);
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(100vh - 57px);
+        }
+
+        #sidebar h3 {
+            color: var(--red);
+            margin-top: 0;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .hist-item {
+            background: var(--panel-light);
+            border-left: 3px solid var(--red);
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .hist-item .src {
+            color: var(--text-dim);
+            font-size: 11px;
+            word-break: break-all;
+            margin-bottom: 6px;
+        }
+
+        .hist-item .meta {
+            color: var(--text);
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .hist-item a {
+            color: var(--red);
+            text-decoration: none;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+
+        .hist-item a:hover {
+            text-decoration: underline;
+        }
+
+        h2 {
+            color: var(--red);
+            font-size: 28px;
+        }
+
+        #main {
+            flex: 1;
+            max-width: 1150px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 20px;
+            align-items: start;
+        }
+
+        .box {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            padding: 24px;
+            border-radius: 10px;
+            margin-bottom: 0;
+        }
+
+        input[type=text],
+        input[type=file],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            background: var(--panel-light);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 6px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            background: var(--red);
+            border: none;
+            color: #fff;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: var(--red-dark);
+        }
+
+        .result {
+            background: var(--panel-light);
+            border-radius: 6px;
+            padding: 14px;
+            margin-top: 14px;
+            min-height: 20px;
+        }
+
+        .result a {
+            display: block;
+            color: var(--red);
+            margin-top: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .result a:hover {
+            text-decoration: underline;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            color: #f66;
+        }
+
+        .file-drop {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 30px 16px;
+            margin: 8px 0;
+            background: var(--panel-light);
+            border: 2px dashed var(--border);
+            color: var(--text-dim);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: border-color 0.2s, color 0.2s, background 0.2s;
+            font-size: 14px;
+        }
+
+        .file-drop:hover {
+            border-color: var(--red);
+            color: var(--text);
+            background: #201414;
+        }
+
+        .file-drop.has-file {
+            border-color: var(--red);
+            border-style: solid;
+            color: #fff;
+            background: #1a1010;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="navbar">
+        <div class="nav-brand"><img src="/assets/img/logo.png" alt="Logo" style="height: 28px; vertical-align: middle;">
+        </div>
+        <div class="nav-links">
+            <a href="/" class="active">Herramientas</a>
+            <a href="https://beatstxre.ismaelrxssett.cloud" target="_blank">Stxre</a>
+        </div>
+    </div>
+
+    <div id="layout">
+        <div id="sidebar">
+            <h3>Historial</h3>
+            <div id="history-list">Cargando...</div>
+        </div>
+
+        <div id="main">
+            <div class="nav-brand"><img src="/assets/img/logo.png" alt="Logo"
+                    style="height: 28px; vertical-align: middle;"></div>
+
+            <div class="dashboard-grid">
+
+                <div class="box">
+                    <h3>Descargar de link (YT / TikTok / IG / FB)</h3>
+                    <input type="text" id="url" placeholder="Pega el link aquí">
+                    <button onclick="downloadUrl()">Descargar y analizar</button>
+                    <div id="result-download" class="result"></div>
+                </div>
+
+                <div class="box">
+                    <h3>Subir sample</h3>
+                    <label id="file-label" for="file" class="file-drop"><span id="file-text">Arrastra tu sample o haz
+                            clic aquí</span></label>
+                    <input type="file" id="file" hidden accept="audio/*">
+                    <button onclick="analyzeFile()">Analizar y convertir a MIDI</button>
+                    <div id="result-upload" class="result"></div>
+                </div>
+
+                <div class="box">
+                    <h3>Subir beat (a Nextcloud)</h3>
+                    <input type="text" id="beat-name" placeholder="Nombre del beat">
+                    <select id="beat-genre">
+                        <option value="">Selecciona género...</option>
+                        <option value="Boom Bap">Boom Bap</option>
+                        <option value="Trap">Trap</option>
+                        <option value="Reggaeton">Reggaetón</option>
+                    </select>
+                    <input type="text" id="beat-bpm" placeholder="BPM (ej. 95)" inputmode="numeric">
+                    <input type="text" id="beat-scale" placeholder="Escala/Tonalidad (ej. F#m)">
+                    <label id="beatfile-label" for="beatfile" class="file-drop"><span id="beatfile-text">Arrastra tu
+                            beat o haz clic aquí</span></label>
+                    <input type="file" id="beatfile" hidden accept="audio/*">
+                    <button onclick="uploadBeat()">Subir beat</button>
+                    <div id="beat-progress-wrap"
+                        style="display:none; background:var(--panel-light); border-radius:6px; overflow:hidden; height:18px; margin-top:10px;">
+                        <div id="beat-progress-bar"
+                            style="height:100%; width:0%; background:var(--red); transition:width .15s;"></div>
+                    </div>
+                    <div id="beat-progress-text"
+                        style="text-align:center; font-size:12px; color:var(--text-dim); margin-top:4px;"></div>
+                    <div id="result-beat" class="result"></div>
+                </div>
+
+                <div class="box">
+                    <h3>Gestionar beats</h3>
+                    <select id="manage-beat-select" onchange="loadBeatIntoEditor()">
+                        <option value="">Selecciona un beat...</option>
+                    </select>
+                    <div id="beat-editor" style="display:none;">
+                        <input type="text" id="edit-name" placeholder="Nombre">
+                        <select id="edit-genre">
+                            <option value="Boom Bap">Boom Bap</option>
+                            <option value="Trap">Trap</option>
+                            <option value="Reggaeton">Reggaetón</option>
+                        </select>
+                        <input type="text" id="edit-bpm" placeholder="BPM">
+                        <input type="text" id="edit-scale" placeholder="Escala">
+                        <div style="font-size:12px; color:var(--text-dim); margin:6px 0;">Estado actual: <strong
+                                id="edit-status-label"></strong></div>
+                        <div style="display:flex; gap:8px;">
+                            <button onclick="saveBeatEdit()">Guardar cambios</button>
+                            <button style="background:#333;" onclick="deleteCurrentBeat()">🗑️ Eliminar</button>
+                        </div>
+                    </div>
+                    <div id="result-manage" class="result"></div>
+                </div>
+
+                <div class="box">
+                    <h3>Leads</h3>
+                    <div id="leads-list" style="max-height: 400px; overflow-y: auto;">Cargando...</div>
+                </div>
+
+                <div class="box">
+                    <h3>Registrar venta y generar licencia</h3>
+                    <select id="unified-beat-select">
+                        <option value="">Selecciona un beat...</option>
+                    </select>
+                    <select id="unified-status-select" onchange="toggleLicenseFields()">
+                        <option value="vendido">🔴 Vendido (Generar licencia PDF y ocultar del reproductor)</option>
+                        <option value="apartado">🟡 Apartado (Reservar en el reproductor)</option>
+                        <option value="disponible">🟢 Disponible (Público)</option>
+                    </select>
+                    <div id="license-fields">
+                        <input type="text" id="artistic-name" placeholder="Nombre artístico del cliente">
+                        <input type="text" id="real-name" placeholder="Nombre completo del cliente">
+                        <input type="text" id="price" placeholder="Precio (ej. $600.00 MXN)" value="$600.00 MXN">
+                        <input type="text" id="payment-note"
+                            placeholder="Nota de pago (opcional, ej. Dos exhibiciones de $300 MXN)">
+                    </div>
+                    <button onclick="processBeatAction()">Procesar Registro</button>
+                    <div id="result-unified" class="result"></div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <script>
+            function setupDropzone(inputId, labelId, textId) {
+                const input = document.getElementById(inputId);
+                const label = document.getElementById(labelId);
+                const text = document.getElementById(textId);
+                input.addEventListener('change', () => {
+                    if (input.files.length) { text.textContent = input.files[0].name; label.classList.add('has-file'); }
+                    else { text.textContent = "Arrastra tu archivo o haz clic aquí"; label.classList.remove('has-file'); }
+                });
+                label.addEventListener('dragover', (e) => { e.preventDefault(); label.classList.add('has-file'); });
+                label.addEventListener('dragleave', () => { if (!input.files.length) label.classList.remove('has-file'); });
+                label.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    if (e.dataTransfer.files.length) {
+                        input.files = e.dataTransfer.files;
+                        text.textContent = input.files[0].name;
+                        label.classList.add('has-file');
+                    }
+                });
+            }
+            setupDropzone('file', 'file-label', 'file-text');
+            setupDropzone('beatfile', 'beatfile-label', 'beatfile-text');
+
+            function renderResult(container, data) {
+                if (data.error) { container.innerHTML = "<pre>" + JSON.stringify(data, null, 2) + "</pre>"; return; }
+                let html = `
+        <div><strong>Key:</strong> ${data.analysis.key} ${data.analysis.scale} (confianza: ${data.analysis.confidence})</div>
+        <div><strong>BPM:</strong> ${data.analysis.bpm}</div>
+        <a href="${data.file}" download>⬇ Descargar WAV</a>
+      `;
+                if (data.midi) html += `<a href="${data.midi}" download>⬇ Descargar MIDI</a>`;
+                container.innerHTML = html;
+            }
+
+            async function downloadUrl() {
+                const url = document.getElementById('url').value;
+                const out = document.getElementById('result-download');
+                out.innerHTML = "Procesando...";
+                const form = new FormData(); form.append('url', url);
+                const res = await fetch('/download', { method: 'POST', body: form });
+                renderResult(out, await res.json());
+                loadHistory();
+            }
+
+            async function analyzeFile() {
+                const fileInput = document.getElementById('file');
+                const out = document.getElementById('result-upload');
+                if (!fileInput.files.length) return;
+                out.innerHTML = "Procesando...";
+                const form = new FormData(); form.append('file', fileInput.files[0]);
+                const res = await fetch('/analyze', { method: 'POST', body: form });
+                renderResult(out, await res.json());
+                loadHistory();
+            }
+
+            let allLeads = [];
+            let leadsExpanded = false;
+
+            async function loadLeads() {
+                const container = document.getElementById('leads-list');
+                allLeads = await (await fetch('/leads')).json();
+
+                if (!allLeads.length) {
+                    container.innerHTML = "<div style='color:#888;font-size:13px;'>Sin leads aún.</div>";
+                    return;
+                }
+
+                renderLeads();
+            }
+
+            function renderLeads() {
+                const container = document.getElementById('leads-list');
+                const visible = leadsExpanded ? allLeads : allLeads.slice(0, 3);
+
+                let html = visible.map(l => `
+    <div class="hist-item">
+      <div class="src">${l.date} · ${l.beat_name || 'Beat eliminado'}</div>
+      <div class="meta">${l.name}</div>
+      <div style="font-size: 12px; color: var(--text-dim); margin-bottom: 6px;">${l.contact}</div>
+      ${l.message ? `<div style="font-size: 12px; color: var(--text); font-style: italic;">"${l.message}"</div>` : ''}
+    </div>
+  `).join("");
+
+                if (allLeads.length > 3) {
+                    html += `<div style="text-align:center; margin-top:8px;">
+      <button style="width:auto; padding:6px 16px; font-size:12px; background:var(--panel-light); border:1px solid var(--border);" onclick="toggleLeadsExpanded()">
+        ${leadsExpanded ? 'Ver menos' : `Ver ${allLeads.length - 3} más`}
+      </button>
+    </div>`;
+                }
+
+                container.innerHTML = html;
+            }
+
+            function toggleLeadsExpanded() {
+                leadsExpanded = !leadsExpanded;
+                renderLeads();
+            }
+
+            function uploadBeat() {
+                const name = document.getElementById('beat-name').value;
+                const genre = document.getElementById('beat-genre').value;
+                const bpm = document.getElementById('beat-bpm').value;
+                const scale = document.getElementById('beat-scale').value;
+                const fileInput = document.getElementById('beatfile');
+                const out = document.getElementById('result-beat');
+                const progWrap = document.getElementById('beat-progress-wrap');
+                const progBar = document.getElementById('beat-progress-bar');
+                const progText = document.getElementById('beat-progress-text');
+
+                if (!name || !genre || !fileInput.files.length) { out.innerHTML = "Falta el nombre, género o archivo."; return; }
+
+                out.innerHTML = "";
+                progWrap.style.display = 'block';
+                progBar.style.width = '0%';
+                progBar.style.background = 'var(--red)';
+                progText.textContent = '0%';
+
+                const form = new FormData();
+                form.append('beat_name', name);
+                form.append('genre', genre);
+                form.append('bpm', bpm);
+                form.append('key_scale', scale);
+                form.append('file', fileInput.files[0]);
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/beats/upload');
+
+                xhr.upload.onprogress = (e) => {
+                    if (!e.lengthComputable) return;
+                    const pct = Math.round((e.loaded / e.total) * 100);
+                    progBar.style.width = pct + '%';
+                    progText.textContent = pct + '%';
+                    const hue = Math.round((pct / 100) * 120);
+                    progBar.style.background = `hsl(${hue}, 80%, 45%)`;
+                };
+
+                xhr.onload = () => {
+                    progWrap.style.display = 'none';
+                    let data;
+                    try { data = JSON.parse(xhr.responseText); } catch (e) { out.innerHTML = "Error leyendo la respuesta del servidor."; return; }
+                    if (data.error) { out.innerHTML = "<pre>" + JSON.stringify(data, null, 2) + "</pre>"; return; }
+                    out.innerHTML = `<div>"${data.beat_name}" (${data.genre}) subido ${data.nextcloud_synced ? '(sincronizado con Nextcloud)' : '(⚠ no se sincronizó con Nextcloud, revisa .env)'}</div>`;
+                    loadBeats();
+                    loadManageBeatSelect();
+                };
+
+                xhr.onerror = () => {
+                    progWrap.style.display = 'none';
+                    out.innerHTML = "Error de conexión al subir el beat.";
+                };
+
+                xhr.send(form);
+            }
+
+            function toggleLicenseFields() {
+                const status = document.getElementById('unified-status-select').value;
+                const fields = document.getElementById('license-fields');
+                fields.style.display = (status === 'vendido') ? 'block' : 'none';
+            }
+
+            async function processBeatAction() {
+                const beatId = document.getElementById('unified-beat-select').value;
+                const status = document.getElementById('unified-status-select').value;
+                const artisticName = document.getElementById('artistic-name').value;
+                const realName = document.getElementById('real-name').value;
+                const price = document.getElementById('price').value;
+                const paymentNote = document.getElementById('payment-note').value;
+                const out = document.getElementById('result-unified');
+
+                if (!beatId) {
+                    out.innerHTML = "Selecciona un beat.";
+                    return;
+                }
+
+                out.innerHTML = "Procesando venta, generando PDF y creando carpeta en Nextcloud...";
+
+                const form = new FormData();
+                form.append('beat_id', beatId);
+                form.append('status', status);
+                form.append('artistic_name', artisticName);
+                form.append('real_name', realName);
+                form.append('price', price);
+                form.append('payment_note', paymentNote);
+
+                const res = await fetch('/beats/sell-and-license', { method: 'POST', body: form });
+                const data = await res.json();
+
+                if (data.error) {
+                    out.innerHTML = "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
+                    return;
+                }
+
+                let html = `<div><strong>Beat:</strong> ${data.beat_name} | <strong>Nuevo estado:</strong> ${data.new_status}</div>`;
+
+                if (data.license) {
+                    html += `<div style="font-size: 12px; color: #aaa; margin-top: 4px;"><strong>Orden:</strong> ${data.license.order_id}</div>`;
+
+                    if (data.license.public_share_url) {
+                        html += `<div style="margin-top: 12px; padding: 12px; background: #201414; border: 1px solid var(--red); border-radius: 6px;">`;
+                        html += `<div style="font-size: 12px; color: #fff; font-weight: bold; margin-bottom: 6px;">🔗 Link Público de Entrega (Nextcloud):</div>`;
+                        html += `<input type="text" readonly value="${data.license.public_share_url}" style="width: 100%; margin: 0; font-size: 12px; background: #0a0a0a; cursor: pointer;" onclick="this.select(); document.execCommand('copy'); alert('¡Enlace de entrega copiado!');">`;
+                        html += `</div>`;
+                    } else {
+                        html += `<div style="font-size: 11px; color: #f88; margin-top: 6px;">⚠ Licencia guardada localmente (no se pudo generar enlace público en Nextcloud).</div>`;
+                    }
+
+                    html += `<div style="margin-top: 12px; display: flex; gap: 12px;">`;
+                    html += `<a href="${data.license.file}" download style="color: var(--red); text-decoration: none; font-weight: bold;">📄 Descargar Licencia PDF</a>`;
+                    if (data.beat_file) {
+                        html += `<a href="${data.beat_file}" download style="color: #4ec960; text-decoration: none; font-weight: bold;">🎵 Descargar WAV del Beat</a>`;
+                    }
+                    html += `</div>`;
+                }
+
+                out.innerHTML = html;
+                loadBeats();
+                loadManageBeatSelect();
+            }
+
+            async function loadHistory() {
+                const list = document.getElementById('history-list');
+                const items = await (await fetch('/history')).json();
+                if (!items.length) { list.innerHTML = "<div style='color:#888;font-size:13px;'>Sin conversiones aún</div>"; return; }
+                list.innerHTML = items.map(item => {
+                    const midiLink = item.midi ? `<a href="${item.midi}" download>MIDI</a>` : "";
+                    return `<div class="hist-item">
+          <div class="src">${item.date} · ${item.type === 'download' ? '🔗 link' : '📁 upload'}</div>
+          <div class="src">${item.source.length > 45 ? item.source.slice(0, 45) + '...' : item.source}</div>
+          <div class="meta">${item.analysis.key} ${item.analysis.scale} · ${item.analysis.bpm} BPM</div>
+          <a href="${item.file}" download>WAV</a>${midiLink}
+        </div>`;
+                }).join("");
+            }
+
+            async function loadBeats() {
+                const select = document.getElementById('unified-beat-select');
+                const items = await (await fetch('/beats?include_sold=false')).json();
+
+                if (!items.length) {
+                    select.innerHTML = '<option value="">No hay beats disponibles para venta</option>';
+                    return;
+                }
+
+                select.innerHTML = '<option value="">Selecciona un beat...</option>' +
+                    items.map(b => {
+                        const st = b.status ? ` [${b.status}]` : '';
+                        return `<option value="${b.id}">${b.beat_name} (${b.genre || 'Sin género'})${st}</option>`;
+                    }).join("");
+            }
+
+            // ---------- Gestionar beats (dropdown) ----------
+
+            let manageBeatsData = [];
+            let currentManageBeatId = null;
+
+            async function loadManageBeatSelect() {
+                const select = document.getElementById('manage-beat-select');
+                manageBeatsData = await (await fetch('/beats?include_sold=true')).json();
+
+                if (!manageBeatsData.length) {
+                    select.innerHTML = '<option value="">No hay beats</option>';
+                    document.getElementById('beat-editor').style.display = 'none';
+                    return;
+                }
+
+                select.innerHTML = '<option value="">Selecciona un beat...</option>' +
+                    manageBeatsData.map(b => `<option value="${b.id}">${b.beat_name} (${b.genre || 'Sin género'}) [${b.status}]</option>`).join("");
+            }
+
+            function loadBeatIntoEditor() {
+                const id = document.getElementById('manage-beat-select').value;
+                const editor = document.getElementById('beat-editor');
+                currentManageBeatId = id || null;
+
+                if (!id) { editor.style.display = 'none'; return; }
+
+                const b = manageBeatsData.find(x => x.id === id);
+                if (!b) return;
+
+                document.getElementById('edit-name').value = b.beat_name;
+                document.getElementById('edit-genre').value = b.genre || 'Boom Bap';
+                document.getElementById('edit-bpm').value = b.bpm || '';
+                document.getElementById('edit-scale').value = b.key_scale || '';
+                document.getElementById('edit-status-label').textContent = b.status;
+                document.getElementById('result-manage').innerHTML = '';
+                editor.style.display = 'block';
+            }
+
+            async function saveBeatEdit() {
+                if (!currentManageBeatId) return;
+                const out = document.getElementById('result-manage');
+
+                const form = new FormData();
+                form.append('beat_name', document.getElementById('edit-name').value);
+                form.append('genre', document.getElementById('edit-genre').value);
+                form.append('bpm', document.getElementById('edit-bpm').value);
+                form.append('key_scale', document.getElementById('edit-scale').value);
+
+                const res = await fetch(`/beats/${currentManageBeatId}`, { method: 'PUT', body: form });
+                const data = await res.json();
+
+                out.innerHTML = data.error
+                    ? `<pre>${JSON.stringify(data, null, 2)}</pre>`
+                    : "Cambios guardados.";
+
+                loadManageBeatSelect();
+                loadBeats();
+            }
+
+            async function deleteCurrentBeat() {
+                if (!currentManageBeatId) return;
+                const b = manageBeatsData.find(x => x.id === currentManageBeatId);
+                if (!confirm(`¿Eliminar "${b.beat_name}" definitivamente (incluyendo el archivo en Nextcloud)? Esto no se puede deshacer.`)) return;
+
+                await fetch(`/beats/${currentManageBeatId}`, { method: 'DELETE' });
+
+                document.getElementById('beat-editor').style.display = 'none';
+                document.getElementById('result-manage').innerHTML = "🗑️ Beat eliminado.";
+                document.getElementById('manage-beat-select').value = '';
+                currentManageBeatId = null;
+
+                loadManageBeatSelect();
+                loadBeats();
+            }
+
+            loadHistory();
+            loadBeats();
+            loadManageBeatSelect();
+            loadLeads();
+        </script>
+
+</body>
+
+</html>

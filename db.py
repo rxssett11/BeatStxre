@@ -21,6 +21,8 @@ beats_table = Table(
     Column("id", String(16), primary_key=True),
     Column("beat_name", String(255), nullable=False),
     Column("genre", String(50)),
+    Column("bpm", Integer),
+    Column("key_scale", String(20)),
     Column("filename", String(255)),
     Column("file", String(500)),
     Column("preview_file", String(500)),
@@ -56,6 +58,19 @@ history_table = Table(
     Column("created_at", DateTime, default=datetime.utcnow),
 )
 
+    
+leads_table = Table(
+    "leads", metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("beat_id", String(16)),
+    Column("beat_name", String(255)),
+    Column("name", String(255)),
+    Column("contact", String(255)),
+    Column("message", Text),
+    Column("created_at", DateTime, default=datetime.utcnow),
+)
+
+
 
 def init_db():
     metadata.create_all(engine)
@@ -87,6 +102,7 @@ def db_insert_beat(entry):
     with engine.begin() as conn:
         conn.execute(beats_table.insert().values(
             id=entry["id"], beat_name=entry["beat_name"], genre=entry["genre"],
+            bpm=entry.get("bpm"), key_scale=entry.get("key_scale"),
             filename=entry["filename"], file=entry["file"], status=entry["status"],
             preview_file=entry.get("preview_file"),
             nextcloud_synced=entry["nextcloud_synced"],
@@ -96,6 +112,18 @@ def db_insert_beat(entry):
 def db_update_beat_status(beat_id, status):
     with engine.begin() as conn:
         conn.execute(beats_table.update().where(beats_table.c.id == beat_id).values(status=status))
+        
+
+def db_update_beat(beat_id, **fields):
+    if not fields:
+        return
+    with engine.begin() as conn:
+        conn.execute(beats_table.update().where(beats_table.c.id == beat_id).values(**fields))
+
+
+def db_delete_beat(beat_id):
+    with engine.begin() as conn:
+        conn.execute(beats_table.delete().where(beats_table.c.id == beat_id))
 
 
 # ---------- licenses ----------
@@ -114,6 +142,13 @@ def db_get_licenses():
 def db_count_licenses():
     with engine.connect() as conn:
         return conn.execute(select(func.count()).select_from(licenses_table)).scalar()
+
+def db_count_licenses_by_order_prefix(prefix):
+    with engine.connect() as conn:
+        return conn.execute(
+            select(func.count()).select_from(licenses_table)
+            .where(licenses_table.c.order_id.like(f"{prefix}%"))
+        ).scalar() or 0
 
 
 def db_insert_license(entry):
@@ -151,3 +186,27 @@ def db_insert_history(entry):
             midi=entry.get("midi"), key_note=analysis["key"], scale=analysis["scale"],
             confidence=analysis["confidence"], bpm=analysis["bpm"],
         ))
+        
+        
+# ---------- Contac ----------
+
+
+
+def db_insert_lead(entry):
+    with engine.begin() as conn:
+        conn.execute(leads_table.insert().values(
+            beat_id=entry["beat_id"], beat_name=entry["beat_name"],
+            name=entry["name"], contact=entry["contact"],
+            message=entry.get("message", ""),
+        ))
+
+
+def db_get_leads():
+    with engine.connect() as conn:
+        rows = conn.execute(leads_table.select().order_by(leads_table.c.created_at.desc())).mappings().all()
+    result = []
+    for r in rows:
+        d = dict(r)
+        d["date"] = d["created_at"].strftime("%Y-%m-%d %H:%M") if d.get("created_at") else None
+        result.append(d)
+    return result
