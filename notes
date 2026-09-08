@@ -1,0 +1,39 @@
+https://www.tiktok.com/v2/auth/authorize/?client_key=sbawef7cmizea2e8b9&scope=video.upload&response_type=code&redirect_uri=https://panelstxre.ismaelrxssett.cloud/tiktok/callback&state=xyz123
+
+{"code":"W-FadoaF9MLgoAjJplFqeXCSsp355fbHN9ro0o2l0AWFlNG2ZGdhu77PDe8efudJ9PwiWyoY2mySb6zGIk0iLKpiKj4LtI1hj87lWitWKc7Yz0NozqnvSnyL20st5QK1p9IGQmhQ3Pgt6KXWuOWYR3WFBqkfRbL_zojqZqtJVwLfOkEaK59pDTePxIop3WEaNAfMumQr_uAGMLGzZM9-QOSOIdhPbTRXYwMSvBDwrLOQl9PPnafdagdnnoo*v!5599.s1","state":"xyz123"}
+
+
+
+
+
+curl -X POST "https://open.tiktokapis.com/v2/oauth/token/" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  --data-urlencode "client_key=sbawef7cmizea2e8b9" \
+  --data-urlencode "client_secret=vcKlFP9D1JcdVUdxzAdhiC2xH7ZqkX9C" \
+  --data-urlencode "code=W-FadoaF9MLgoAjJplFqeXCSsp355fbHN9ro0o2l0AWFlNG2ZGdhu77PDe8efudJ9PwiWyoY2mySb6zGIk0iLKpiKj4LtI1hj87lWitWKc7Yz0NozqnvSnyL20st5QK1p9IGQmhQ3Pgt6KXWuOWYR3WFBqkfRbL_zojqZqtJVwLfOkEaK59pDTePxIop3WEaNAfMumQr_uAGMLGzZM9-QOSOIdhPbTRXYwMSvBDwrLOQl9PPnafdagdnnoo*v!5599.s1" \
+  --data-urlencode "grant_type=authorization_code" \
+  --data-urlencode "redirect_uri=https://panelstxre.ismaelrxssett.cloud/tiktok/callback"
+
+
+  https://www.tiktok.com/v2/auth/authorize/?client_key=sbawef7cmizea2e8b9&scope=video.upload&response_type=code&redirect_uri=https://panelstxre.ismaelrxssett.cloud/tiktok/callback&state=xyz123
+
+
+  set +H
+curl -X POST "https://open.tiktokapis.com/v2/oauth/token/" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  --data-urlencode "client_key=sbawef7cmizea2e8b9" \
+  --data-urlencode "client_secret=vcKlFP9D1JcdVUdxzAdhiC2xH7ZqkX9C" \
+  --data-urlencode 'code=gjEqsQmioScmnICK-CxBc7AJkv8doTsthgvnM245KQn43qOtm0jgba3YuLHOtMDFh9rRFSOBDgPqe6vQVE8AJ9bjvWIRfPl7r-K2FBVzGZbnj2ica4ojoSF9lGML6C1-z8IxgB8PMuhYmUz_X9FoX5dEZP1xKbBgWYwJFPUAT0QusU_durz16fTIjrU2FQCDnzGClxBnfVBvbEv1PTgISdRJut0b89MRE58169JrLCzZ38_rHhzPQCj_24o*v!5595.s1' \
+  --data-urlencode "grant_type=authorization_code" \
+  --data-urlencode "redirect_uri=https://panelstxre.ismaelrxssett.cloud/tiktok/callback"
+
+
+
+  curl -X POST "https://open.tiktokapis.com/v2/oauth/token/" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  --data-urlencode "client_key=sbawef7cmizea2e8b9" \
+  --data-urlencode "client_secret=vcKlFP9D1JcdVUdxzAdhiC2xH7ZqkX9C" \
+  --data-urlencode 'code=gjEqsQmioScmnICK-CxBc7AJkv8doTsthgvnM245KQn43qOtm0jgba3YuLHOtMDFh9rRFSOBDgPqe6vQVE8AJ9bjvWIRfPl7r-K2FBVzGZbnj2ica4ojoSF9lGML6C1-z8IxgB8PMuhYmUz_X9FoX5dEZP1xKbBgWYwJFPUAT0QusU_durz16fTIjrU2FQCDnzGClxBnfVBvbEv1PTgISdRJut0b89MRE58169JrLCzZ38_rHhzPQCj_24o*v!5595.s1' \
+  --data-urlencode "grant_type=authorization_code" \
+  --data-urlencode "redirect_uri=https://panelstxre.ismaelrxssett.cloud/tiktok/callback"
+{"access_token":"act.E0F563nfr5zBj1RfkzFwxsOorJwMSf9W2nbgtLaHEI6TX31fEoNCltbOMBYW!5603.s1","expires_in":86400,"open_id":"-000oUuVMf5zW0Pmm8PY397hBJeu5we_7Tyb","refresh_expires_in":31536000,"refresh_token":"rft.AG8O0PswJnVfoVlbcwjdxWLUyoNChyNgBCdWdyjTu3oQdF5h4cgfjCvbCoTv!5590.s1","scope":"video.upload,user.info.basic","token_type":"Bearer"}root@srv1314346:~/docker/services/prxdbeats#

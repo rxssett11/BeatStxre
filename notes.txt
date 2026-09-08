@@ -1,3 +1,25 @@
 docker compose down
 docker compose -f docker-compose.yml up -d --build
 docker compose up -d --build
+
+
+
+docker exec -it prxdbeats ffmpeg -y \
+  -i /app/beats/Trap/Trapical.mp3 \
+  -t 60 \
+  -filter_complex "[0:a]showfreqs=s=1000x500:mode=line:ascale=log:fscale=log:colors=0xE50914[vis];color=c=black:s=1080x1920:d=60[bg];[bg][vis]overlay=(W-w)/2:(H-h)/2:shortest=1[outv]" \
+  -map "[outv]" -map 0:a \
+  -c:v libx264 -pix_fmt yuv420p -c:a aac -b:a 192k -shortest \
+  /app/promo/test_promo_line.mp4
+
+
+
+
+  TT
+  ClientKey: awb083yrcjxgnaw3
+  ClientSecret: nfCoF3pdP7z2sqnTmijiuzRRPhiGDvNG
+
+
+  
+CK: sbawef7cmizea2e8b9
+CS: vcKlFP9D1JcdVUdxzAdhiC2xH7ZqkX9C

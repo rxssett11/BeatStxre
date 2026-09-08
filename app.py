@@ -5,6 +5,7 @@ import uuid
 import shutil
 import httpx
 import subprocess
+import asyncio
 import xml.etree.ElementTree as ET
 from typing import Optional
 from pathlib import Path
@@ -24,6 +25,7 @@ from fastapi import FastAPI, UploadFile, File, Form, Request, Response
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi import BackgroundTasks
 
 import essentia.standard as es
 from basic_pitch.inference import predict_and_save
@@ -61,6 +63,16 @@ WHATSAPP_NUMBER = os.getenv("WHATSAPP_NUMBER", "")
 N8N_LEAD_WEBHOOK = os.getenv("N8N_LEAD_WEBHOOK", "") 
 
 GENRES = ["Boom Bap", "Trap", "Reggaeton"]
+
+PROMO_DIR = BASE_DIR / "promo"
+PROMO_DIR.mkdir(exist_ok=True)
+app.mount("/promo-files", StaticFiles(directory=PROMO_DIR), name="promo-files")
+
+PROMO_MAX_SECONDS = 60
+
+TIKTOK_CLIENT_KEY = os.getenv("TIKTOK_CLIENT_KEY", "")
+TIKTOK_CLIENT_SECRET = os.getenv("TIKTOK_CLIENT_SECRET", "")
+TIKTOK_REFRESH_TOKEN = os.getenv("TIKTOK_REFRESH_TOKEN", "")
 
 
 def safe_genre_folder(genre: str) -> str:
@@ -196,6 +208,75 @@ def generate_watermarked_preview(source_path: Path, output_path: Path):
         str(output_path),
     ]
     subprocess.run(cmd, capture_output=True)
+    
+
+FONT_PATH = BASE_DIR / "assets" / "fonts" / "BebasNeue-Regular.ttf"
+
+def escape_drawtext(text: str) -> str:
+    text = text.replace("\\", "\\\\")
+    text = text.replace(":", "\\:")
+    text = text.replace("'", "\\'")
+    text = text.replace("%", "\\%")
+    return text
+
+
+def generate_promo_video(source_path: Path, output_path: Path, beat_name: str = "",
+                          bpm: Optional[int] = None, key_scale: Optional[str] = None,
+                          max_duration: int = PROMO_MAX_SECONDS):
+    probe = subprocess.run(
+        ["ffprobe", "-v", "error", "-show_entries", "format=duration",
+         "-of", "default=noprint_wrappers=1:nokey=1", str(source_path)],
+        capture_output=True, text=True,
+    )
+    try:
+        duration = float(probe.stdout.strip())
+    except ValueError:
+        duration = max_duration
+    clip_duration = min(duration, max_duration) if duration else max_duration
+
+    title_text = escape_drawtext(beat_name.upper())
+    sub_parts = []
+    if bpm:
+        sub_parts.append(f"{bpm} BPM")
+    if key_scale:
+        sub_parts.append(key_scale)
+    subtitle_text = escape_drawtext(" | ".join(sub_parts))
+
+    filter_complex = (
+        "[0:a]showwaves=s=1080x700:mode=cline:colors=0xE50914:draw=full[vis];"
+        f"color=c=black:s=1080x1920:d={clip_duration}[bg];"
+        f"[bg][vis]overlay=(W-w)/2:(H-h)/2:shortest=1"
+        f",drawtext=fontfile='{FONT_PATH}':text='{title_text}':fontcolor=white:fontsize=64:x=(w-text_w)/2:y=1350"
+    )
+    if subtitle_text:
+        filter_complex += (
+            f",drawtext=fontfile='{FONT_PATH}':text='{subtitle_text}':"
+            f"fontcolor=white:fontsize=38:x=(w-text_w)/2:y=1440"
+        )
+    filter_complex += "[outv]"
+
+    tmp_path = output_path.with_suffix(".tmp.mp4")
+    cmd = [
+        "ffmpeg", "-y",
+        "-i", str(source_path),
+        "-t", str(clip_duration),
+        "-filter_complex", filter_complex,
+        "-map", "[outv]", "-map", "0:a",
+        "-c:v", "libx264", "-pix_fmt", "yuv420p",
+        "-c:a", "aac", "-b:a", "192k",
+        "-shortest",
+        str(tmp_path),
+    ]
+    result = subprocess.run(cmd, capture_output=True)
+
+    if result.returncode == 0 and tmp_path.exists():
+        tmp_path.replace(output_path)
+    else:
+        if tmp_path.exists():
+            tmp_path.unlink()
+        print(f"⚠ Fallo generando promo para {source_path.name}: {result.stderr.decode(errors='replace')[-800:]}")
+        
+        
 
 
 # ---------- Nextcloud (WebDAV & OCS Sharing) ----------
@@ -640,6 +721,7 @@ async def analyze_upload(file: UploadFile = File(...)):
 
 @app.post("/beats/upload")
 async def upload_beat(
+    background_tasks: BackgroundTasks,
     beat_name: str = Form(...),
     genre: str = Form(...),
     bpm: Optional[str] = Form(None),
@@ -685,7 +767,11 @@ async def upload_beat(
     }
     db_insert_beat(entry)
 
-    return entry    
+    promo_filename = re.sub(r"[^A-Za-z0-9_-]", "_", beat_name) + "_promo.mp4"
+    promo_path = PROMO_DIR / promo_filename
+    background_tasks.add_task(process_promo_and_distribute, local_path, promo_path, beat_name, bpm_value, key_scale.strip() if key_scale else None)
+    entry["promo_video"] = f"/promo-files/{promo_filename}"
+    return entry
   
   
 @app.put("/beats/{beat_id}")
@@ -777,3 +863,181 @@ def delete_beat(beat_id: str):
     db_delete_beat(beat_id)
     return {"status": "ok", "deleted": beat_id, "nextcloud_deleted": nextcloud_deleted}
   
+  
+@app.get("/promo-videos")
+def get_promo_videos():
+    beats = db_get_beats(include_sold=True)
+    match_by_filename = {}
+    for b in beats:
+        fname = re.sub(r"[^A-Za-z0-9_-]", "_", b["beat_name"]) + "_promo.mp4"
+        match_by_filename[fname] = b
+
+    results = []
+    for f in sorted(PROMO_DIR.glob("*_promo.mp4"), key=lambda p: p.stat().st_mtime, reverse=True):
+        beat = match_by_filename.get(f.name)
+        results.append({
+            "filename": f.name,
+            "url": f"/promo-files/{f.name}",
+            "beat_name": beat["beat_name"] if beat else f.stem.replace("_promo", "").replace("_", " "),
+            "genre": beat.get("genre") if beat else None,
+            "size_mb": round(f.stat().st_size / (1024 * 1024), 2),
+            "date": datetime.fromtimestamp(f.stat().st_mtime).strftime("%Y-%m-%d %H:%M"),
+        })
+    return results
+
+
+#----- TIKTOK ----
+
+@app.get("/tiktok/callback")
+async def tiktok_callback(code: str = None, state: str = None):
+    return {"code": code, "state": state}
+
+
+async def get_tiktok_access_token() -> str:
+    async with httpx.AsyncClient(timeout=15.0) as client:
+        resp = await client.post(
+            "https://open.tiktokapis.com/v2/oauth/token/",
+            data={
+                "client_key": TIKTOK_CLIENT_KEY,
+                "client_secret": TIKTOK_CLIENT_SECRET,
+                "grant_type": "refresh_token",
+                "refresh_token": TIKTOK_REFRESH_TOKEN,
+            },
+        )
+        data = resp.json()
+        if "access_token" not in data:
+            raise RuntimeError(f"TikTok token refresh falló: {data}")
+        return data["access_token"]
+
+
+@app.post("/beats/{beat_id}/distribute-tiktok")
+async def distribute_to_tiktok(beat_id: str):
+    beat = db_get_beat(beat_id)
+    if not beat:
+        return JSONResponse(status_code=404, content={"error": "Beat no encontrado"})
+
+    promo_filename = re.sub(r"[^A-Za-z0-9_-]", "_", beat["beat_name"]) + "_promo.mp4"
+    promo_path = PROMO_DIR / promo_filename
+    if not promo_path.exists():
+        return JSONResponse(status_code=400, content={"error": "El video promo aún no existe"})
+
+    access_token = await get_tiktok_access_token()
+    video_size = promo_path.stat().st_size
+
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        init_resp = await client.post(
+            "https://open.tiktokapis.com/v2/post/publish/inbox/video/init/",
+            headers={"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"},
+            json={
+                "source_info": {
+                    "source": "FILE_UPLOAD",
+                    "video_size": video_size,
+                    "chunk_size": video_size,
+                    "total_chunk_count": 1,
+                }
+            },
+        )
+        init_data = init_resp.json()
+        if "data" not in init_data:
+            return JSONResponse(status_code=500, content={"error": "Fallo iniciando subida a TikTok", "detail": init_data})
+
+        upload_url = init_data["data"]["upload_url"]
+
+        with open(promo_path, "rb") as f:
+            video_bytes = f.read()
+
+        await client.put(
+            upload_url,
+            headers={
+                "Content-Type": "video/mp4",
+                "Content-Range": f"bytes 0-{video_size - 1}/{video_size}",
+            },
+            content=video_bytes,
+        )
+
+    return {"status": "ok", "message": "Video enviado a tu bandeja de TikTok, termina de publicarlo desde la app."}
+
+
+async def upload_video_to_tiktok_inbox(promo_path: Path):
+    access_token = await get_tiktok_access_token()
+    video_size = promo_path.stat().st_size
+
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        init_resp = await client.post(
+            "https://open.tiktokapis.com/v2/post/publish/inbox/video/init/",
+            headers={"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"},
+            json={
+                "source_info": {
+                    "source": "FILE_UPLOAD",
+                    "video_size": video_size,
+                    "chunk_size": video_size,
+                    "total_chunk_count": 1,
+                }
+            },
+        )
+        init_data = init_resp.json()
+        if "data" not in init_data:
+            raise RuntimeError(f"Fallo iniciando subida a TikTok: {init_data}")
+
+        upload_url = init_data["data"]["upload_url"]
+
+        with open(promo_path, "rb") as f:
+            video_bytes = f.read()
+
+        await client.put(
+            upload_url,
+            headers={
+                "Content-Type": "video/mp4",
+                "Content-Range": f"bytes 0-{video_size - 1}/{video_size}",
+            },
+            content=video_bytes,
+        )
+
+
+def process_promo_and_distribute(source_path: Path, output_path: Path, beat_name: str,
+                                  bpm: Optional[int], key_scale: Optional[str]):
+    generate_promo_video(source_path, output_path, beat_name, bpm, key_scale)
+
+    if not output_path.exists():
+        print(f"⚠ No se generó el promo para '{beat_name}', se omite distribución a TikTok.")
+        return
+
+    try:
+        asyncio.run(upload_video_to_tiktok_inbox(output_path))
+        print(f"✔ '{beat_name}' enviado automáticamente a la bandeja de TikTok.")
+    except Exception as e:
+        print(f"⚠ Fallo distribuyendo '{beat_name}' a TikTok: {e}")
+
+#----- TERMS AND POLICY
+
+@app.get("/terms", response_class=HTMLResponse)
+def terms_of_service():
+    return """
+    <html><head><meta charset="UTF-8"><title>Términos de Servicio - BeatStxre</title></head>
+    <body style="font-family:sans-serif; max-width:700px; margin:40px auto; line-height:1.6;">
+    <h1>Términos de Servicio</h1>
+    <p>BeatStxre (beatstxre.ismaelrxssett.cloud) es una tienda personal de beats musicales operada por Ismael Rossete.</p>
+    <p>Al usar este sitio, aceptas que:</p>
+    <ul>
+      <li>Los beats se ofrecen bajo licencias de uso (lease/exclusiva) según se detalla en cada compra.</li>
+      <li>Los pagos y entregas de licencia se coordinan directamente con el productor vía WhatsApp o el formulario de contacto del sitio.</li>
+      <li>El contenido promocional (videos, previews) es propiedad del productor y se comparte con fines de difusión musical.</li>
+    </ul>
+    <p>Para dudas, contacta a través de los medios indicados en el sitio.</p>
+    <p><em>Última actualización: 2026.</em></p>
+    </body></html>
+    """
+
+
+@app.get("/privacy", response_class=HTMLResponse)
+def privacy_policy():
+    return """
+    <html><head><meta charset="UTF-8"><title>Política de Privacidad - BeatStxre</title></head>
+    <body style="font-family:sans-serif; max-width:700px; margin:40px auto; line-height:1.6;">
+    <h1>Política de Privacidad</h1>
+    <p>BeatStxre recopila únicamente los datos que envías voluntariamente al formulario de contacto (nombre, medio de contacto y mensaje) con el fin de dar seguimiento a tu interés en un beat.</p>
+    <p>No compartimos, vendemos ni cedemos esta información a terceros. Se usa exclusivamente para comunicarnos contigo sobre tu solicitud.</p>
+    <p>Puedes solicitar la eliminación de tus datos en cualquier momento contactando al productor.</p>
+    <p><em>Última actualización: 2026.</em></p>
+    </body></html>
+    """

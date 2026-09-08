@@ -9,6 +9,7 @@ services:
       - ./downloads:/app/downloads
       - ./beats:/app/beats
       - ./licenses:/app/licenses
+      - ./promo:/app/promo
       - ./history.json:/app/history.json
       - ./beats.json:/app/beats.json
       - ./licenses.json:/app/licenses.json

@@ -232,6 +232,106 @@
             color: #fff;
             background: #1a1010;
         }
+
+                /* ---------- RESPONSIVE ---------- */
+
+        @media (max-width: 900px) {
+            #layout {
+                flex-direction: column;
+            }
+
+            #sidebar {
+                width: 100%;
+                max-height: 260px;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                order: 2;
+            }
+
+            #main {
+                order: 1;
+                margin: 24px auto;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            #navbar {
+                padding: 12px 16px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            #navbar .nav-links a {
+                margin-left: 8px;
+                font-size: 13px;
+                padding: 5px 10px;
+            }
+
+            #main {
+                padding: 0 14px;
+                margin: 16px auto;
+            }
+
+            h2 {
+                font-size: 22px;
+            }
+
+            .box {
+                padding: 16px;
+            }
+
+            #sidebar {
+                padding: 14px;
+                max-height: 220px;
+            }
+
+            .hist-item {
+                font-size: 12px;
+            }
+
+            button {
+                padding: 11px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #navbar .nav-brand img {
+                height: 22px !important;
+            }
+
+            #navbar .nav-links a {
+                font-size: 12px;
+                padding: 4px 8px;
+                margin-left: 4px;
+            }
+
+            .box h3 {
+                font-size: 15px;
+            }
+
+            .file-drop {
+                padding: 22px 12px;
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            #promo-gallery {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important;
+                gap: 10px !important;
+            }
+        }
+
+        @media (max-width: 400px) {
+            #promo-gallery {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
     </style>
 </head>
 
@@ -349,6 +449,13 @@
                     <div id="result-unified" class="result"></div>
                 </div>
 
+                <div class="box" style="grid-column: 1 / -1;">
+                    <h3>Galería de videos promo</h3>
+                    <div id="promo-gallery"
+                        style="display:grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap:14px;">
+                        Cargando...</div>
+                </div>
+
             </div>
         </div>
 
@@ -379,11 +486,11 @@
             function renderResult(container, data) {
                 if (data.error) { container.innerHTML = "<pre>" + JSON.stringify(data, null, 2) + "</pre>"; return; }
                 let html = `
-        <div><strong>Key:</strong> ${data.analysis.key} ${data.analysis.scale} (confianza: ${data.analysis.confidence})</div>
-        <div><strong>BPM:</strong> ${data.analysis.bpm}</div>
-        <a href="${data.file}" download>⬇ Descargar WAV</a>
-      `;
-                if (data.midi) html += `<a href="${data.midi}" download>⬇ Descargar MIDI</a>`;
+                            <div><strong>Key:</strong> ${data.analysis.key} ${data.analysis.scale} (confianza: ${data.analysis.confidence})</div>
+                            <div><strong>BPM:</strong> ${data.analysis.bpm}</div>
+                            <a href="${data.file}" download>Descargar WAV</a>
+                        `;
+                if (data.midi) html += `<a href="${data.midi}" download>Descargar MIDI</a>`;
                 container.innerHTML = html;
             }
 
@@ -428,20 +535,20 @@
                 const visible = leadsExpanded ? allLeads : allLeads.slice(0, 3);
 
                 let html = visible.map(l => `
-    <div class="hist-item">
-      <div class="src">${l.date} · ${l.beat_name || 'Beat eliminado'}</div>
-      <div class="meta">${l.name}</div>
-      <div style="font-size: 12px; color: var(--text-dim); margin-bottom: 6px;">${l.contact}</div>
-      ${l.message ? `<div style="font-size: 12px; color: var(--text); font-style: italic;">"${l.message}"</div>` : ''}
-    </div>
-  `).join("");
+                                    <div class="hist-item">
+                                    <div class="src">${l.date} · ${l.beat_name || 'Beat eliminado'}</div>
+                                    <div class="meta">${l.name}</div>
+                                    <div style="font-size: 12px; color: var(--text-dim); margin-bottom: 6px;">${l.contact}</div>
+                                    ${l.message ? `<div style="font-size: 12px; color: var(--text); font-style: italic;">"${l.message}"</div>` : ''}
+                                    </div>
+                                `).join("");
 
                 if (allLeads.length > 3) {
                     html += `<div style="text-align:center; margin-top:8px;">
-      <button style="width:auto; padding:6px 16px; font-size:12px; background:var(--panel-light); border:1px solid var(--border);" onclick="toggleLeadsExpanded()">
-        ${leadsExpanded ? 'Ver menos' : `Ver ${allLeads.length - 3} más`}
-      </button>
-    </div>`;
+                                <button style="width:auto; padding:6px 16px; font-size:12px; background:var(--panel-light); border:1px solid var(--border);" onclick="toggleLeadsExpanded()">
+                                    ${leadsExpanded ? 'Ver menos' : `Ver ${allLeads.length - 3} más`}
+                                </button>
+                            </div>`;
                 }
 
                 container.innerHTML = html;
@@ -495,7 +602,15 @@
                     let data;
                     try { data = JSON.parse(xhr.responseText); } catch (e) { out.innerHTML = "Error leyendo la respuesta del servidor."; return; }
                     if (data.error) { out.innerHTML = "<pre>" + JSON.stringify(data, null, 2) + "</pre>"; return; }
-                    out.innerHTML = `<div>"${data.beat_name}" (${data.genre}) subido ${data.nextcloud_synced ? '(sincronizado con Nextcloud)' : '(⚠ no se sincronizó con Nextcloud, revisa .env)'}</div>`;
+
+                    out.innerHTML = `
+                        <div>"${data.beat_name}" (${data.genre}) subido ${data.nextcloud_synced ? '(sincronizado con Nextcloud)' : '(⚠ no se sincronizó con Nextcloud, revisa .env)'}</div>
+                        <div style="display:flex; gap:8px; margin-top:10px;">
+                            <button style="width:auto; padding:8px 14px; font-size:12px;" onclick="checkPromoVideo('${data.promo_video}', this)">Descargar video promo</button>
+                            <button style="width:auto; padding:8px 14px; font-size:12px; background:#333;" disabled title="Próximamente">Distribuir</button>
+                        </div>
+                        <div id="promo-status" style="font-size:11px; color:var(--text-dim); margin-top:6px;"></div>
+                        `;
                     loadBeats();
                     loadManageBeatSelect();
                 };
@@ -506,6 +621,21 @@
                 };
 
                 xhr.send(form);
+            }
+
+            async function checkPromoVideo(url, btn) {
+                const status = document.getElementById('promo-status');
+                status.textContent = "Verificando...";
+                try {
+                    const res = await fetch(url, { method: 'HEAD' });
+                    if (res.ok) {
+                        status.innerHTML = `<a href="${url}" download style="color: var(--red); font-weight:bold;">✔ Video listo — clic aquí para descargar</a>`;
+                    } else {
+                        status.textContent = "Aún se está generando (puede tardar 1-2 min según la duración del beat). Intenta de nuevo en un momento.";
+                    }
+                } catch (e) {
+                    status.textContent = "No se pudo verificar el video, intenta de nuevo.";
+                }
             }
 
             function toggleLicenseFields() {
@@ -561,9 +691,9 @@
                     }
 
                     html += `<div style="margin-top: 12px; display: flex; gap: 12px;">`;
-                    html += `<a href="${data.license.file}" download style="color: var(--red); text-decoration: none; font-weight: bold;">📄 Descargar Licencia PDF</a>`;
+                    html += `<a href="${data.license.file}" download style="color: var(--red); text-decoration: none; font-weight: bold;">Descargar Licencia PDF</a>`;
                     if (data.beat_file) {
-                        html += `<a href="${data.beat_file}" download style="color: #4ec960; text-decoration: none; font-weight: bold;">🎵 Descargar WAV del Beat</a>`;
+                        html += `<a href="${data.beat_file}" download style="color: #4ec960; text-decoration: none; font-weight: bold;">Descargar WAV del Beat</a>`;
                     }
                     html += `</div>`;
                 }
@@ -580,11 +710,11 @@
                 list.innerHTML = items.map(item => {
                     const midiLink = item.midi ? `<a href="${item.midi}" download>MIDI</a>` : "";
                     return `<div class="hist-item">
-          <div class="src">${item.date} · ${item.type === 'download' ? '🔗 link' : '📁 upload'}</div>
-          <div class="src">${item.source.length > 45 ? item.source.slice(0, 45) + '...' : item.source}</div>
-          <div class="meta">${item.analysis.key} ${item.analysis.scale} · ${item.analysis.bpm} BPM</div>
-          <a href="${item.file}" download>WAV</a>${midiLink}
-        </div>`;
+                        <div class="src">${item.date} · ${item.type === 'download' ? '🔗 link' : '📁 upload'}</div>
+                        <div class="src">${item.source.length > 45 ? item.source.slice(0, 45) + '...' : item.source}</div>
+                        <div class="meta">${item.analysis.key} ${item.analysis.scale} · ${item.analysis.bpm} BPM</div>
+                        <a href="${item.file}" download>WAV</a>${midiLink}
+                        </div>`;
                 }).join("");
             }
 
@@ -602,6 +732,27 @@
                         const st = b.status ? ` [${b.status}]` : '';
                         return `<option value="${b.id}">${b.beat_name} (${b.genre || 'Sin género'})${st}</option>`;
                     }).join("");
+            }
+
+            async function loadPromoGallery() {
+                const container = document.getElementById('promo-gallery');
+                const videos = await (await fetch('/promo-videos')).json();
+
+                if (!videos.length) {
+                    container.innerHTML = "<div style='color:#888; font-size:13px;'>Aún no hay videos promo generados.</div>";
+                    return;
+                }
+
+                container.innerHTML = videos.map(v => `
+                    <div style="background:var(--panel-light); border:1px solid var(--border); border-radius:8px; overflow:hidden;">
+                    <video src="${v.url}?t=${new Date(v.date).getTime()}" muted preload="metadata" style="width:100%; aspect-ratio:9/16; background:#000; object-fit:cover;" controls></video>
+                    <div style="padding:8px 10px;">
+                        <div style="font-size:12px; font-weight:bold; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${v.beat_name}</div>
+                        <div style="font-size:11px; color:var(--text-dim); margin:2px 0 8px;">${v.genre || 'Sin género'} · ${v.size_mb} MB · ${v.date}</div>
+                        <a href="${v.url}?t=${new Date(v.date).getTime()}" download style="display:block; text-align:center; background:var(--red); color:#fff; padding:6px; border-radius:5px; font-size:12px; font-weight:bold; text-decoration:none;">Descargar</a>
+                    </div>
+                    </div>
+                `).join("");
             }
 
             // ---------- Gestionar beats (dropdown) ----------
@@ -683,6 +834,7 @@
             loadBeats();
             loadManageBeatSelect();
             loadLeads();
+            loadPromoGallery();
         </script>
 
 </body>
