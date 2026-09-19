@@ -23,6 +23,7 @@ beats_table = Table(
     Column("genre", String(50)),
     Column("bpm", Integer),
     Column("key_scale", String(20)),
+    Column("price", String(50)),
     Column("filename", String(255)),
     Column("file", String(500)),
     Column("preview_file", String(500)),
@@ -71,6 +72,64 @@ leads_table = Table(
 )
 
 
+tiktok_posts_table = Table(
+    "tiktok_posts", metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("beat_id", String(16)),
+    Column("beat_name", String(255)),
+    Column("video_path", String(500), nullable=False),
+    Column("caption", Text),
+    Column("privacy_level", String(20), default="SELF_ONLY"),
+    Column("status", String(20), default="programado"),  
+    Column("scheduled_at", DateTime, nullable=False),
+    Column("published_at", DateTime),
+    Column("publish_id", String(100)),      
+    Column("tiktok_video_id", String(100)), 
+    Column("error_detail", Text),
+    Column("views", Integer, default=0),
+    Column("likes", Integer, default=0),
+    Column("comments", Integer, default=0),
+    Column("shares", Integer, default=0),
+    Column("stats_updated_at", DateTime),
+    Column("created_at", DateTime, default=datetime.utcnow),
+)
+
+promos_table = Table(
+    "promos", metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("title", String(255)),
+    Column("subtitle", String(255)),
+    Column("active", Boolean, default=False),
+    Column("updated_at", DateTime, default=datetime.utcnow, onupdate=datetime.utcnow),
+)
+
+
+
+def db_get_promo():
+    with engine.connect() as conn:
+        row = conn.execute(
+            promos_table.select().order_by(promos_table.c.id.desc())
+        ).mappings().first()
+    return dict(row) if row else None
+
+
+def db_set_promo(title, subtitle, active):
+    with engine.begin() as conn:
+        existing = conn.execute(
+            promos_table.select().order_by(promos_table.c.id.desc())
+        ).mappings().first()
+        if existing:
+            conn.execute(
+                promos_table.update().where(promos_table.c.id == existing["id"]).values(
+                    title=title, subtitle=subtitle, active=active,
+                )
+            )
+        else:
+            conn.execute(
+                promos_table.insert().values(title=title, subtitle=subtitle, active=active)
+            )
+            
+
 
 def init_db():
     metadata.create_all(engine)
@@ -103,6 +162,7 @@ def db_insert_beat(entry):
         conn.execute(beats_table.insert().values(
             id=entry["id"], beat_name=entry["beat_name"], genre=entry["genre"],
             bpm=entry.get("bpm"), key_scale=entry.get("key_scale"),
+            price=entry.get("price"),
             filename=entry["filename"], file=entry["file"], status=entry["status"],
             preview_file=entry.get("preview_file"),
             nextcloud_synced=entry["nextcloud_synced"],
@@ -210,3 +270,67 @@ def db_get_leads():
         d["date"] = d["created_at"].strftime("%Y-%m-%d %H:%M") if d.get("created_at") else None
         result.append(d)
     return result
+
+
+# ---------- TikTok posts ----------
+
+def db_insert_tiktok_post(entry):
+    with engine.begin() as conn:
+        result = conn.execute(tiktok_posts_table.insert().values(
+            beat_id=entry.get("beat_id"),
+            beat_name=entry.get("beat_name"),
+            video_path=entry["video_path"],
+            caption=entry.get("caption", ""),
+            privacy_level=entry.get("privacy_level", "SELF_ONLY"),
+            status="programado",
+            scheduled_at=entry["scheduled_at"],
+        ))
+        return result.inserted_primary_key[0]
+
+
+def db_get_tiktok_posts():
+    with engine.connect() as conn:
+        rows = conn.execute(
+            tiktok_posts_table.select().order_by(tiktok_posts_table.c.scheduled_at.desc())
+        ).mappings().all()
+    result = []
+    for r in rows:
+        d = dict(r)
+        for k in ("scheduled_at", "published_at", "stats_updated_at", "created_at"):
+            if d.get(k):
+                d[k] = d[k].strftime("%Y-%m-%d %H:%M")
+        result.append(d)
+    return result
+
+
+def db_get_due_tiktok_posts(now):
+    with engine.connect() as conn:
+        rows = conn.execute(
+            tiktok_posts_table.select().where(
+                (tiktok_posts_table.c.status == "programado") &
+                (tiktok_posts_table.c.scheduled_at <= now)
+            )
+        ).mappings().all()
+    return [dict(r) for r in rows]
+
+
+def db_get_published_tiktok_posts():
+    with engine.connect() as conn:
+        rows = conn.execute(
+            tiktok_posts_table.select().where(tiktok_posts_table.c.status == "publicado")
+        ).mappings().all()
+    return [dict(r) for r in rows]
+
+
+def db_update_tiktok_post(post_id, **fields):
+    if not fields:
+        return
+    with engine.begin() as conn:
+        conn.execute(
+            tiktok_posts_table.update().where(tiktok_posts_table.c.id == post_id).values(**fields)
+        )
+
+
+def db_delete_tiktok_post(post_id):
+    with engine.begin() as conn:
+        conn.execute(tiktok_posts_table.delete().where(tiktok_posts_table.c.id == post_id))

@@ -233,7 +233,7 @@
             background: #1a1010;
         }
 
-                /* ---------- RESPONSIVE ---------- */
+        /* ---------- RESPONSIVE ---------- */
 
         @media (max-width: 900px) {
             #layout {
@@ -341,6 +341,7 @@
         <div class="nav-brand"><img src="/assets/img/logo.png" alt="Logo" style="height: 28px; vertical-align: middle;">
         </div>
         <div class="nav-links">
+            <a href="/promos">Videos</a>
             <a href="/" class="active">Herramientas</a>
             <a href="https://beatstxre.ismaelrxssett.cloud" target="_blank">Stxre</a>
         </div>
@@ -385,6 +386,7 @@
                     </select>
                     <input type="text" id="beat-bpm" placeholder="BPM (ej. 95)" inputmode="numeric">
                     <input type="text" id="beat-scale" placeholder="Escala/Tonalidad (ej. F#m)">
+                    <input type="text" id="beat-price" placeholder="Precio (ej. $600 MXN)" value="$600 MXN">
                     <label id="beatfile-label" for="beatfile" class="file-drop"><span id="beatfile-text">Arrastra tu
                             beat o haz clic aquí</span></label>
                     <input type="file" id="beatfile" hidden accept="audio/*">
@@ -413,6 +415,7 @@
                         </select>
                         <input type="text" id="edit-bpm" placeholder="BPM">
                         <input type="text" id="edit-scale" placeholder="Escala">
+                        <input type="text" id="edit-price" placeholder="Precio (ej. $600 MXN)">
                         <div style="font-size:12px; color:var(--text-dim); margin:6px 0;">Estado actual: <strong
                                 id="edit-status-label"></strong></div>
                         <div style="display:flex; gap:8px;">
@@ -449,12 +452,42 @@
                     <div id="result-unified" class="result"></div>
                 </div>
 
-                <div class="box" style="grid-column: 1 / -1;">
-                    <h3>Galería de videos promo</h3>
-                    <div id="promo-gallery"
-                        style="display:grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap:14px;">
-                        Cargando...</div>
+                <div class="box">
+                    <h3>Promoción del catálogo</h3>
+                    <label
+                        style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-dim); margin:8px 0;">
+                        <input type="checkbox" id="promo-active" style="width:auto; margin:0;">
+                        Mostrar promoción activa
+                    </label>
+                    <input type="text" id="promo-title" placeholder="Título (ej. PROMOCIÓN 2X1)">
+                    <input type="text" id="promo-subtitle"
+                        placeholder="Subtítulo (ej. Válida hasta 23 de Septiembre 2026)">
+                    <button onclick="savePromo()">Guardar promoción</button>
+                    <div id="result-promo" class="result"></div>
                 </div>
+
+
+                <!--
+                
+                
+                <div class="box">
+                    <h3>TikTok — Programar y estadísticas</h3>
+                    <select id="tiktok-beat-select">
+                        <option value="">Selecciona un beat con video promo...</option>
+                    </select>
+                    <select id="tiktok-video-type">
+                        <option value="promo">Waveform</option>
+                        <option value="promo_pulse">Pulse</option>
+                    </select>
+                    <input type="text" id="tiktok-caption" placeholder="Descripción / hashtags">
+                    <input type="datetime-local" id="tiktok-scheduled-at">
+                    <button onclick="scheduleTikTokPost()">Programar publicación</button>
+                    <div id="result-tiktok" class="result"></div>
+                    
+                    <div id="tiktok-posts-list" style="margin-top:16px; max-height:400px; overflow-y:auto;">Cargando...
+                    </div>
+                </div>
+                -->
 
             </div>
         </div>
@@ -583,6 +616,7 @@
                 form.append('genre', genre);
                 form.append('bpm', bpm);
                 form.append('key_scale', scale);
+                form.append('price', document.getElementById('beat-price').value);
                 form.append('file', fileInput.files[0]);
 
                 const xhr = new XMLHttpRequest();
@@ -788,6 +822,7 @@
                 document.getElementById('edit-genre').value = b.genre || 'Boom Bap';
                 document.getElementById('edit-bpm').value = b.bpm || '';
                 document.getElementById('edit-scale').value = b.key_scale || '';
+                document.getElementById('edit-price').value = b.price || '';
                 document.getElementById('edit-status-label').textContent = b.status;
                 document.getElementById('result-manage').innerHTML = '';
                 editor.style.display = 'block';
@@ -802,6 +837,7 @@
                 form.append('genre', document.getElementById('edit-genre').value);
                 form.append('bpm', document.getElementById('edit-bpm').value);
                 form.append('key_scale', document.getElementById('edit-scale').value);
+                form.append('price', document.getElementById('edit-price').value);
 
                 const res = await fetch(`/beats/${currentManageBeatId}`, { method: 'PUT', body: form });
                 const data = await res.json();
@@ -830,11 +866,91 @@
                 loadBeats();
             }
 
+            async function loadTikTokBeatSelect() {
+                const select = document.getElementById('tiktok-beat-select');
+                const items = await (await fetch('/beats?include_sold=true')).json();
+                select.innerHTML = '<option value="">Selecciona un beat...</option>' +
+                    items.map(b => `<option value="${b.id}">${b.beat_name} (${b.genre || 'Sin género'})</option>`).join("");
+            }
+
+            async function scheduleTikTokPost() {
+                const beatId = document.getElementById('tiktok-beat-select').value;
+                const videoType = document.getElementById('tiktok-video-type').value;
+                const caption = document.getElementById('tiktok-caption').value;
+                const scheduledAt = document.getElementById('tiktok-scheduled-at').value;
+                const out = document.getElementById('result-tiktok');
+
+                if (!beatId || !scheduledAt) { out.innerHTML = "Falta el beat o la fecha."; return; }
+
+                const form = new FormData();
+                form.append('beat_id', beatId);
+                form.append('video_type', videoType);
+                form.append('caption', caption);
+                form.append('scheduled_at', scheduledAt);
+
+                const res = await fetch('/tiktok/schedule', { method: 'POST', body: form });
+                const data = await res.json();
+
+                out.innerHTML = data.error ? `<pre>${JSON.stringify(data, null, 2)}</pre>` : "Programado ✔";
+                loadTikTokPosts();
+            }
+
+            async function loadTikTokPosts() {
+                const container = document.getElementById('tiktok-posts-list');
+                const posts = await (await fetch('/tiktok/posts')).json();
+
+                if (!posts.length) { container.innerHTML = "<div style='color:#888;font-size:13px;'>Sin publicaciones aún.</div>"; return; }
+
+                const statusColor = { programado: '#e5a93c', publicando: '#4ec9ff', publicado: '#4ec960', error: '#f66' };
+
+                container.innerHTML = posts.map(p => `
+                    <div class="hist-item">
+                        <div class="meta">${p.beat_name} <span style="color:${statusColor[p.status] || '#999'}; font-size:11px; text-transform:uppercase;">[${p.status}]</span></div>
+                        <div class="src">Programado: ${p.scheduled_at}${p.published_at ? ' · Publicado: ' + p.published_at : ''}</div>
+                        ${p.status === 'publicado' ? `<div style="font-size:12px; color:var(--text);">👁 ${p.views || 0} · ❤️ ${p.likes || 0} · 💬 ${p.comments || 0} · 🔁 ${p.shares || 0}</div>` : ''}
+                        ${p.error_detail ? `<div style="font-size:11px; color:#f66;">${p.error_detail}</div>` : ''}
+                        ${p.status === 'programado' ? `<button style="width:auto; padding:4px 10px; font-size:11px; background:#333; margin-top:6px;" onclick="cancelTikTokPost(${p.id})">Cancelar</button>` : ''}
+                    </div>
+                `).join("");
+            }
+
+            async function cancelTikTokPost(id) {
+                if (!confirm("¿Cancelar esta publicación programada?")) return;
+                await fetch(`/tiktok/posts/${id}`, { method: 'DELETE' });
+                loadTikTokPosts();
+            }
+
+            async function loadPromoAdmin() {
+                try {
+                    const res = await fetch('/promo');
+                    const data = await res.json();
+                    document.getElementById('promo-active').checked = !!data.active;
+                    document.getElementById('promo-title').value = data.title || '';
+                    document.getElementById('promo-subtitle').value = data.subtitle || '';
+                } catch (e) { }
+            }
+
+            async function savePromo() {
+                const out = document.getElementById('result-promo');
+                out.innerHTML = "Guardando...";
+                const form = new FormData();
+                form.append('title', document.getElementById('promo-title').value);
+                form.append('subtitle', document.getElementById('promo-subtitle').value);
+                form.append('active', document.getElementById('promo-active').checked ? 'true' : 'false');
+
+                const res = await fetch('/promo', { method: 'POST', body: form });
+                const data = await res.json();
+                out.innerHTML = data.error ? "Error al guardar." : "Promoción actualizada.";
+            }
+
+            loadTikTokBeatSelect();
+            loadTikTokPosts();
             loadHistory();
             loadBeats();
             loadManageBeatSelect();
             loadLeads();
             loadPromoGallery();
+            loadPromoAdmin();
         </script>
 
 </body>

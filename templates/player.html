@@ -671,10 +671,262 @@
         }
 
         .titulo-player {
-            font-size: 2rem;
-            display: flex;
-            justify-content: center;
             text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .titulo-player h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            color: #fff;
+            margin: 0 0 4px 0;
+            letter-spacing: 1px;
+        }
+
+        .titulo-player h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            color: var(--red);
+            margin: 0 0 6px 0;
+            letter-spacing: 1px;
+        }
+
+        .titulo-player p {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin: 0;
+        }
+
+        #promo-banner h3 {
+            color: var(--text);
+            font-size: 2.4rem;
+            margin: 2px 0 2px;
+            text-decoration: underline;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: .5px;
+        }
+
+        #promo-banner p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            margin: 0 0 12px;
+        }
+
+        @media (max-width: 640px) {
+            #promo-banner h3 {
+                font-size: 1.3rem;
+            }
+        }
+
+
+        /* ---------- PRECIOS Y SERVICIOS (visible) ---------- */
+        .price-section {
+            margin: 24px 0 30px;
+        }
+
+        .price-section h3 {
+            color: #fff;
+            font-size: 1.3rem;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: .5px;
+            margin: 0 0 4px;
+        }
+
+        .price-section .price-valid {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-bottom: 14px;
+        }
+
+        .price-table-wrap {
+            overflow-x: auto;
+            margin: 0 0 18px;
+        }
+
+        .price-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            min-width: 480px;
+        }
+
+        .price-table th,
+        .price-table td {
+            border: 1px solid var(--border);
+            padding: 8px 10px;
+            text-align: left;
+        }
+
+        .price-table th {
+            background: var(--panel-light);
+            color: #fff;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+        }
+
+        .price-table td {
+            color: var(--text-dim);
+        }
+
+        .price-table td:last-child,
+        .price-table th:last-child {
+            text-align: right;
+            color: var(--red);
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .price-table tr:nth-child(even) td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .price-table.combos td:last-child {
+            color: #4ec960;
+        }
+
+        @media (max-width:640px) {
+            .price-section h3 {
+                font-size: 1.1rem;
+            }
+
+            .price-table {
+                font-size: 12px;
+            }
+        }
+
+        /* ---------- TÉRMINOS Y CONDICIONES (colapsable) ---------- */
+        .terms-block {
+            max-width: 800px;
+            margin: 20px auto 30px;
+            padding: 20px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .terms-block summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            cursor: pointer;
+            font-size: 1.4rem;
+            color: var(--red);
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: .5px;
+            padding: 6px 0;
+            list-style: none;
+        }
+
+        .terms-block summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .terms-block summary::marker {
+            content: "";
+        }
+
+        .terms-block summary::after {
+            content: '▾';
+            flex-shrink: 0;
+            font-size: 0.9em;
+            transition: transform .2s;
+        }
+
+        .terms-block[open] summary::after {
+            transform: rotate(180deg);
+        }
+
+        .terms-content {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 13.5px;
+            line-height: 1.6;
+            color: var(--text-dim);
+            padding-top: 14px;
+        }
+
+        .terms-content h4 {
+            color: #fff;
+            font-size: 15px;
+            margin: 18px 0 6px;
+        }
+
+        .terms-content ul {
+            margin: 6px 0 6px 18px;
+            padding: 0;
+        }
+
+        .terms-content li {
+            margin-bottom: 4px;
+        }
+
+        .terms-note {
+            background: rgba(229, 9, 20, 0.08);
+            border: 1px solid rgba(229, 9, 20, 0.3);
+            border-radius: 6px;
+            padding: 10px 14px;
+            margin-top: 14px;
+            font-size: 12.5px;
+            color: #f0b8ba;
+        }
+
+        .buy-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .beat-price {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-dim);
+        }
+
+        @media (max-width: 640px) {
+            .beat-price {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .terms-block {
+                margin: 14px 16px 24px;
+                padding: 16px;
+            }
+
+            .terms-block summary {
+                font-size: 1.15rem;
+                padding: 4px 0;
+            }
+
+            .terms-content {
+                font-size: 12.5px;
+                padding-top: 10px;
+            }
+
+            .terms-content h4 {
+                font-size: 13.5px;
+                margin: 14px 0 5px;
+            }
+
+            .terms-note {
+                font-size: 11.5px;
+                padding: 9px 12px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .terms-block summary {
+                font-size: 1rem;
+                letter-spacing: .2px;
+            }
+
+            .terms-content ul {
+                margin-left: 14px;
+            }
         }
 
         @media (max-width: 640px) {
@@ -720,314 +972,476 @@
 
         <div id="player-main">
             <div class="titulo-player">
-                <h2>Catálogo de beats</h2>
+                <h2>Catálogo de Beats</h2>
             </div>
+            <div id="promo-banner" style="display:none; text-align:center;">
+                <h3 id="promo-title"></h3>
+                <p id="promo-subtitle"></p>
+            </div>
+
             <div id="genre-tabs">
                 <button class="genre-tab active" data-genre="">Todos</button>
                 <button class="genre-tab" data-genre="Boom Bap">Boom Bap</button>
                 <button class="genre-tab" data-genre="Trap">Trap</button>
                 <button class="genre-tab" data-genre="Reggaeton">Reggaetón</button>
             </div>
-            <div id="beat-list">Cargando...</div>
+
+            <!--
+            
+            <div class="price-section">
+                <h3>Precios y Servicios</h3>
+                <div class="price-valid">Vigentes hasta el 31 de diciembre de 2026</div>
+                
+                <div class="price-table-wrap">
+                    <table class="price-table">
+                        <thead>
+                            <tr>
+                                <th>Categoría</th>
+                                <th>Servicio</th>
+                                <th>Incluye</th>
+                                <th>Precio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Beats</td>
+                                <td>Beat de Catálogo (Licencia Profesional)</td>
+                                <td>Instrumental existente, entrega en WAV/MP3</td>
+                                <td>$600 MXN</td>
+                            </tr>
+                            <tr>
+                                <td>Beats</td>
+                                <td>Beat Personalizado</td>
+                                <td>Creación a la medida según tu referencia y BPM</td>
+                                <td>$800 MXN</td>
+                            </tr>
+                            <tr>
+                                <td>Beats</td>
+                                <td>Licencia Premium</td>
+                                <td>WAV + Stems + Licencia Comercial</td>
+                                <td>$1,200 MXN</td>
+                            </tr>
+                            <tr>
+                                <td>Estudio</td>
+                                <td>Sesión de Grabación</td>
+                                <td>Bloque de 2 horas de grabación de voces</td>
+                                <td>$350 MXN</td>
+                            </tr>
+                            <tr>
+                                <td>Post-Pro</td>
+                                <td>Mezcla (por track)</td>
+                                <td>Balance de canales, EQ, dinámica y afinación</td>
+                                <td>$550 MXN</td>
+                            </tr>
+                            <tr>
+                                <td>Post-Pro</td>
+                                <td>Masterización (por track)</td>
+                                <td>Optimización de volumen y LUFS para streaming</td>
+                                <td>$550 MXN</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="price-table-wrap">
+                    <table class="price-table combos">
+                        <thead>
+                            <tr>
+                                <th>Paquete</th>
+                                <th>Servicios incluidos</th>
+                                <th>Precio total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Combo Producción 2 hrs</td>
+                                <td>Grabación + Mezcla + Máster</td>
+                                <td>$1,250 MXN</td>
+                            </tr>
+                            <tr>
+                                <td>Combo Postproducción</td>
+                                <td>Mezcla + Máster</td>
+                                <td>$900 MXN</td>
+                            </tr>
+                            <tr>
+                                <td>Combo Producción Completa (Catálogo)</td>
+                                <td>1 Beat de Catálogo + 2 hrs Grabación + Mezcla + Máster</td>
+                                <td>$1,650 MXN</td>
+                            </tr>
+                            <tr>
+                                <td>Combo Producción Completa (Personalizado)</td>
+                                <td>1 Beat Personalizado + 2 hrs Grabación + Mezcla + Máster</td>
+                                <td>$1,850 MXN</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                -->
         </div>
 
-        <div id="bottom-player">
-            <div class="player-track-info">
-                <div id="current-title" class="player-track-title">Selecciona un beat</div>
-                <div id="current-genre" class="player-track-sub">--</div>
-            </div>
+        <div id="beat-list">Cargando...</div>
+    </div>
 
-            <div class="player-center">
-                <div class="player-controls">
-                    <button id="shuffle-btn" class="ctrl-btn" onclick="toggleShuffle()" title="Aleatorio">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M17 3l4 4-4 4M3 7h5l3.5 5M21 17h-5l-1.5-2M3 17l4 4-4-4M3 17l4-4" />
-                        </svg>
-                    </button>
-                    <button class="ctrl-btn" onclick="playPrev()" title="Anterior">
-                        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
-                            <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
-                        </svg>
-                    </button>
-                    <button id="main-play-toggle" class="main-play-btn" onclick="togglePlay()">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z" />
-                        </svg>
-                    </button>
-                    <button class="ctrl-btn" onclick="playNext()" title="Siguiente">
-                        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
-                            <path d="M16 6h2v12h-2zM6 6l8.5 6L6 18z" />
-                        </svg>
-                    </button>
-                    <button id="repeat-btn" class="ctrl-btn" onclick="toggleRepeat()" title="Repetir">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3" />
-                        </svg>
-                    </button>
-                </div>
-                <div class="progress-wrapper">
-                    <span id="time-current">0:00</span>
-                    <input type="range" id="progress-bar" class="progress-bar" min="0" max="100" value="0" step="0.1">
-                    <span id="time-total">0:00</span>
-                </div>
-            </div>
+    <div id="bottom-player">
+        <div class="player-track-info">
+            <div id="current-title" class="player-track-title">Selecciona un beat</div>
+            <div id="current-genre" class="player-track-sub">--</div>
+        </div>
 
-            <div class="player-right">
-                <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:var(--text-dim);flex-shrink:0;">
-                    <path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2a4.5 4.5 0 00-2.5-4v8a4.5 4.5 0 002.5-4z" />
-                </svg>
-                <input type="range" class="volume-slider" min="0" max="1" step="0.05" value="1"
-                    oninput="setVolume(this.value)">
+        <div class="player-center">
+            <div class="player-controls">
+                <button id="shuffle-btn" class="ctrl-btn" onclick="toggleShuffle()" title="Aleatorio">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M17 3l4 4-4 4M3 7h5l3.5 5M21 17h-5l-1.5-2M3 17l4 4-4-4M3 17l4-4" />
+                    </svg>
+                </button>
+                <button class="ctrl-btn" onclick="playPrev()" title="Anterior">
+                    <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                        <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+                    </svg>
+                </button>
+                <button id="main-play-toggle" class="main-play-btn" onclick="togglePlay()">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                </button>
+                <button class="ctrl-btn" onclick="playNext()" title="Siguiente">
+                    <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                        <path d="M16 6h2v12h-2zM6 6l8.5 6L6 18z" />
+                    </svg>
+                </button>
+                <button id="repeat-btn" class="ctrl-btn" onclick="toggleRepeat()" title="Repetir">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3" />
+                    </svg>
+                </button>
+            </div>
+            <div class="progress-wrapper">
+                <span id="time-current">0:00</span>
+                <input type="range" id="progress-bar" class="progress-bar" min="0" max="100" value="0" step="0.1">
+                <span id="time-total">0:00</span>
             </div>
         </div>
 
-        <audio id="audio-player" preload="metadata"></audio>
+        <div class="player-right">
+            <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:var(--text-dim);flex-shrink:0;">
+                <path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2a4.5 4.5 0 00-2.5-4v8a4.5 4.5 0 002.5-4z" />
+            </svg>
+            <input type="range" class="volume-slider" min="0" max="1" step="0.05" value="1"
+                oninput="setVolume(this.value)">
+        </div>
+    </div>
 
-        <div id="contact-modal" class="modal-overlay">
-            <div class="modal-box">
-                <button class="modal-close" onclick="closeContactModal()">✕</button>
-                <h3>¿Te interesa este beat?</h3>
-                <div class="modal-beat" id="modal-beat-name"></div>
-                <div class="modal-actions">
-                    <button id="whatsapp-link" class="whatsapp-btn" onclick="openWhatsApp()">Escribir por
-                        WhatsApp</button>
-                    <button class="form-toggle-btn" onclick="toggleContactForm()">Dejar mis datos</button>
-                </div>
-                <div class="modal-form" id="contact-form">
-                    <input type="text" id="lead-name" placeholder="Tu nombre">
-                    <input type="text" id="lead-contact" placeholder="WhatsApp, email o Instagram">
-                    <textarea id="lead-message" rows="2" placeholder="Mensaje (opcional)"></textarea>
-                    <button class="submit-lead-btn" onclick="submitLead()">Enviar</button>
-                    <div id="lead-result" style="font-size: 12px; margin-top: 8px; color: var(--text-dim);"></div>
-                </div>
+    <audio id="audio-player" preload="metadata"></audio>
+
+    <div id="contact-modal" class="modal-overlay">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeContactModal()">✕</button>
+            <h3>¿Te interesa este beat?</h3>
+            <div class="modal-beat" id="modal-beat-name"></div>
+            <div class="modal-actions">
+                <button id="whatsapp-link" class="whatsapp-btn" onclick="openWhatsApp()">Escribir por
+                    WhatsApp</button>
+                <button class="form-toggle-btn" onclick="toggleContactForm()">Dejar mis datos</button>
+            </div>
+            <div class="modal-form" id="contact-form">
+                <input type="text" id="lead-name" placeholder="Tu nombre">
+                <input type="text" id="lead-contact" placeholder="WhatsApp, email o Instagram">
+                <textarea id="lead-message" rows="2" placeholder="Mensaje (opcional)"></textarea>
+                <button class="submit-lead-btn" onclick="submitLead()">Enviar</button>
+                <div id="lead-result" style="font-size: 12px; margin-top: 8px; color: var(--text-dim);"></div>
             </div>
         </div>
+    </div>
 
-        <script>
-            let currentGenre = "";
-            let beatsData = [];
-            let currentBeatIndex = -1;
+    <details class="terms-block" id="terms-section">
+        <summary>Términos y Condiciones</summary>
+        <div class="terms-content">
+            <p>Al adquirir cualquier beat, servicio o paquete de <strong>rxssettprxd</strong>, aceptas los
+                siguientes términos:</p>
 
-            const audio = document.getElementById('audio-player');
-            const progressBar = document.getElementById('progress-bar');
-            let isSeeking = false;
-            let shuffleOn = false;
-            let repeatOn = false;
+            <h4>1. Licencias y uso</h4>
+            <ul>
+                <li>Los beats de catálogo se entregan bajo licencia de uso profesional.</li>
+                <li>La Licencia Premium incluye los stems (pistas separadas) y uso comercial ampliado.</li>
+                <li>Una vez entregado el archivo, la venta es final; no se aceptan devoluciones por cambio de
+                    opinión.</li>
+            </ul>
 
-            audio.addEventListener('timeupdate', () => {
-                if (!isSeeking && audio.duration) {
-                    progressBar.value = (audio.currentTime / audio.duration) * 100;
-                }
-                document.getElementById('time-current').textContent = formatTime(audio.currentTime);
-            });
+            <h4>2. Formatos de entrega</h4>
+            <ul>
+                <li><strong>Beats / Instrumentales:</strong> WAV (24-bit) + MP3 (320 kbps).</li>
+                <li><strong>Mezcla y Máster:</strong> WAV (24-bit / 44.1 kHz o 48 kHz) optimizado para plataformas
+                    digitales (Spotify, Apple Music, YouTube) + MP3 320 kbps.</li>
+            </ul>
 
-            audio.addEventListener('loadedmetadata', () => {
-                document.getElementById('time-total').textContent = formatTime(audio.duration);
-            });
+            <h4>3. Anticipos y pagos</h4>
+            <p>Se requiere el <strong>50% de anticipo</strong> para apartar fecha de grabación o iniciar
+                producción/mezcla. El saldo restante se liquida contra entrega.</p>
 
-            audio.addEventListener('ended', () => {
-                if (repeatOn) {
-                    audio.currentTime = 0;
-                    audio.play();
-                    return;
-                }
-                playNext();
-            });
+            <h4>4. Revisiones</h4>
+            <p>Cada servicio de mezcla incluye hasta <strong>3 sesiones de revisiones gratuitas</strong>. Cambios
+                adicionales tienen un costo de $100 MXN por exportación.</p>
 
-            progressBar.addEventListener('input', () => { isSeeking = true; });
-            progressBar.addEventListener('change', () => {
-                if (audio.duration) audio.currentTime = (progressBar.value / 100) * audio.duration;
-                isSeeking = false;
-            });
+            <h4>5. Tiempos de entrega</h4>
+            <ul>
+                <li>Beats de catálogo: entrega inmediata tras el pago.</li>
+                <li>Beats personalizados: 3 a 5 días hábiles.</li>
+                <li>Mezcla y máster: 6 a 9 días hábiles tras terminar la sesión de grabación.</li>
+            </ul>
 
-            function playBeat(index) {
-                if (currentBeatIndex === index) { togglePlay(); return; }
-                currentBeatIndex = index;
-                const beat = beatsData[index];
+            <h4>6. Promociones</h4>
+            <p>Los descuentos o precios de oferta no son acumulables entre sí y aplican únicamente durante las
+                fechas vigentes anunciadas.</p>
 
-                audio.src = beat.preview_file || beat.file;
+            <div class="terms-note">
+                Para dudas o para coordinar tu compra, contáctanos por WhatsApp desde el catálogo.
+            </div>
+        </div>
+    </details>
+
+    <script>
+        let currentGenre = "";
+        let beatsData = [];
+        let currentBeatIndex = -1;
+
+        const audio = document.getElementById('audio-player');
+        const progressBar = document.getElementById('progress-bar');
+        let isSeeking = false;
+        let shuffleOn = false;
+        let repeatOn = false;
+
+        audio.addEventListener('timeupdate', () => {
+            if (!isSeeking && audio.duration) {
+                progressBar.value = (audio.currentTime / audio.duration) * 100;
+            }
+            document.getElementById('time-current').textContent = formatTime(audio.currentTime);
+        });
+
+        audio.addEventListener('loadedmetadata', () => {
+            document.getElementById('time-total').textContent = formatTime(audio.duration);
+        });
+
+        audio.addEventListener('ended', () => {
+            if (repeatOn) {
+                audio.currentTime = 0;
                 audio.play();
-
-                document.getElementById('current-title').textContent = beat.beat_name;
-                document.getElementById('current-genre').textContent = beat.genre || 'Sin género';
-                updatePlayIcon(true);
-
-                loadBeats();
+                return;
             }
+            playNext();
+        });
 
-            function togglePlay() {
-                if (currentBeatIndex === -1) return;
-                if (audio.paused) {
-                    audio.play();
-                    updatePlayIcon(true);
-                } else {
-                    audio.pause();
-                    updatePlayIcon(false);
-                }
-                loadBeats();
-            }
+        progressBar.addEventListener('input', () => { isSeeking = true; });
+        progressBar.addEventListener('change', () => {
+            if (audio.duration) audio.currentTime = (progressBar.value / 100) * audio.duration;
+            isSeeking = false;
+        });
 
-            function updatePlayIcon(playing) {
-                const btn = document.getElementById('main-play-toggle');
-                btn.innerHTML = playing
-                    ? '<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>'
-                    : '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
-            }
+        function playBeat(index) {
+            if (currentBeatIndex === index) { togglePlay(); return; }
+            currentBeatIndex = index;
+            const beat = beatsData[index];
 
-            function playNext() {
-                if (!beatsData.length) return;
-                const nextIndex = shuffleOn
-                    ? Math.floor(Math.random() * beatsData.length)
-                    : (currentBeatIndex + 1 < beatsData.length ? currentBeatIndex + 1 : 0);
-                playBeat(nextIndex);
-            }
+            audio.src = beat.preview_file || beat.file;
+            audio.play();
 
-            function playPrev() {
-                if (!beatsData.length) return;
-                const prevIndex = currentBeatIndex - 1 >= 0 ? currentBeatIndex - 1 : beatsData.length - 1;
-                playBeat(prevIndex);
-            }
-
-            function toggleShuffle() {
-                shuffleOn = !shuffleOn;
-                document.getElementById('shuffle-btn').classList.toggle('active', shuffleOn);
-            }
-
-            function toggleRepeat() {
-                repeatOn = !repeatOn;
-                document.getElementById('repeat-btn').classList.toggle('active', repeatOn);
-            }
-
-            function setVolume(val) {
-                audio.volume = val;
-            }
-
-            function formatTime(sec) {
-                if (isNaN(sec)) return "0:00";
-                const m = Math.floor(sec / 60);
-                const s = Math.floor(sec % 60);
-                return `${m}:${s < 10 ? '0' : ''}${s}`;
-            }
-
-            document.querySelectorAll('.genre-tab').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.genre-tab').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    currentGenre = btn.dataset.genre;
-                    loadBeats();
-                });
-            });
-
-            async function loadBeats() {
-                const list = document.getElementById('beat-list');
-                let url = '/beats?include_sold=false';
-                if (currentGenre) {
-                    url += `&genre=${encodeURIComponent(currentGenre)}`;
-                }
-
-                const res = await fetch(url);
-                beatsData = await res.json();
-
-                if (!beatsData.length) { list.innerHTML = "<div style='color:#888;'>No hay beats disponibles.</div>"; return; }
-
-                list.innerHTML = beatsData.map((b, idx) => {
-                    const status = b.status || 'disponible';
-                    const isPlaying = currentBeatIndex === idx && !audio.paused;
-                    const bpmScale = (b.bpm || b.key_scale)
-                        ? `<span class="beat-bpm">${b.bpm ? b.bpm + ' BPM' : ''}${b.bpm && b.key_scale ? ' · ' : ''}${b.key_scale || ''}</span>`
-                        : '';
-                    const playIcon = isPlaying
-                        ? '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>'
-                        : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
-                    return `
-          <div class="beat-card ${currentBeatIndex === idx ? 'playing' : ''}" onclick="playBeat(${idx})">
-            <div class="beat-left">
-              <button class="play-btn-item" onclick="event.stopPropagation(); playBeat(${idx})">
-                ${playIcon}
-              </button>
-              <div>
-                <div class="beat-title">${b.beat_name}</div>
-                <div class="beat-tags">
-                  <span class="beat-genre">${b.genre || 'Sin género'}</span>
-                  ${bpmScale}
-                  <!---
-                  <span class="status-badge status-${status}">${status}</span>
-                  --->
-                </div>
-              </div>
-            </div>
-            <button class="buy-btn" onclick="event.stopPropagation(); openContactModal('${b.id}', '${b.beat_name.replace(/'/g, "\\'")}')">Comprar</button>
-          </div>
-        `;
-                }).join("");
-            }
-
-            let modalBeatId = null;
-            let modalBeatName = null;
-            const WHATSAPP_NUMBER = "{{ whatsapp_number }}";
-            let whatsappUrl = "";
-
-            function openContactModal(beatId, beatName) {
-                modalBeatId = beatId;
-                modalBeatName = beatName;
-                document.getElementById('modal-beat-name').textContent = beatName;
-
-                const msg = encodeURIComponent(`Hola! Me interesa el beat "${beatName}", ¿me das info?`);
-                whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
-
-                document.getElementById('contact-form').classList.remove('open');
-                document.getElementById('lead-result').textContent = '';
-                document.getElementById('contact-modal').classList.add('open');
-            }
-
-            function openWhatsApp() {
-                const form = new FormData();
-                form.append('beat_id', modalBeatId);
-                form.append('name', 'Vía WhatsApp');
-                form.append('contact', 'N/A');
-                form.append('message', 'Dio clic en Escribir por WhatsApp');
-
-                fetch('/beats/interest', { method: 'POST', body: form }).catch(() => { });
-
-                window.open(whatsappUrl, '_blank');
-            }
-
-            function closeContactModal() {
-                document.getElementById('contact-modal').classList.remove('open');
-            }
-
-            function toggleContactForm() {
-                document.getElementById('contact-form').classList.toggle('open');
-            }
-
-            async function submitLead() {
-                const name = document.getElementById('lead-name').value;
-                const contact = document.getElementById('lead-contact').value;
-                const message = document.getElementById('lead-message').value;
-                const out = document.getElementById('lead-result');
-
-                if (!name || !contact) { out.textContent = "Falta tu nombre o un dato de contacto."; return; }
-
-                out.textContent = "Enviando...";
-                const form = new FormData();
-                form.append('beat_id', modalBeatId);
-                form.append('name', name);
-                form.append('contact', contact);
-                form.append('message', message);
-
-                const res = await fetch('/beats/interest', { method: 'POST', body: form });
-                if (res.ok) {
-                    out.textContent = "¡Listo! Te contactaremos pronto.";
-                    document.getElementById('lead-name').value = '';
-                    document.getElementById('lead-contact').value = '';
-                    document.getElementById('lead-message').value = '';
-                } else {
-                    out.textContent = "Hubo un error, intenta de nuevo.";
-                }
-            }
+            document.getElementById('current-title').textContent = beat.beat_name;
+            document.getElementById('current-genre').textContent = beat.genre || 'Sin género';
+            updatePlayIcon(true);
 
             loadBeats();
-        </script>
+        }
+
+        function togglePlay() {
+            if (currentBeatIndex === -1) return;
+            if (audio.paused) {
+                audio.play();
+                updatePlayIcon(true);
+            } else {
+                audio.pause();
+                updatePlayIcon(false);
+            }
+            loadBeats();
+        }
+
+        function updatePlayIcon(playing) {
+            const btn = document.getElementById('main-play-toggle');
+            btn.innerHTML = playing
+                ? '<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>'
+                : '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+        }
+
+        function playNext() {
+            if (!beatsData.length) return;
+            const nextIndex = shuffleOn
+                ? Math.floor(Math.random() * beatsData.length)
+                : (currentBeatIndex + 1 < beatsData.length ? currentBeatIndex + 1 : 0);
+            playBeat(nextIndex);
+        }
+
+        function playPrev() {
+            if (!beatsData.length) return;
+            const prevIndex = currentBeatIndex - 1 >= 0 ? currentBeatIndex - 1 : beatsData.length - 1;
+            playBeat(prevIndex);
+        }
+
+        function toggleShuffle() {
+            shuffleOn = !shuffleOn;
+            document.getElementById('shuffle-btn').classList.toggle('active', shuffleOn);
+        }
+
+        function toggleRepeat() {
+            repeatOn = !repeatOn;
+            document.getElementById('repeat-btn').classList.toggle('active', repeatOn);
+        }
+
+        function setVolume(val) {
+            audio.volume = val;
+        }
+
+        function formatTime(sec) {
+            if (isNaN(sec)) return "0:00";
+            const m = Math.floor(sec / 60);
+            const s = Math.floor(sec % 60);
+            return `${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        document.querySelectorAll('.genre-tab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.genre-tab').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentGenre = btn.dataset.genre;
+                loadBeats();
+            });
+        });
+
+        async function loadBeats() {
+            const list = document.getElementById('beat-list');
+            let url = '/beats?include_sold=false';
+            if (currentGenre) {
+                url += `&genre=${encodeURIComponent(currentGenre)}`;
+            }
+
+            const res = await fetch(url);
+            beatsData = await res.json();
+
+            if (!beatsData.length) { list.innerHTML = "<div style='color:#888;'>No hay beats disponibles.</div>"; return; }
+
+            list.innerHTML = beatsData.map((b, idx) => {
+                const status = b.status || 'disponible';
+                const isPlaying = currentBeatIndex === idx && !audio.paused;
+                const bpmScale = (b.bpm || b.key_scale)
+                    ? `<span class="beat-bpm">${b.bpm ? b.bpm + ' BPM' : ''}${b.bpm && b.key_scale ? ' · ' : ''}${b.key_scale || ''}</span>`
+                    : '';
+                const playIcon = isPlaying
+                    ? '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>'
+                    : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+                return `
+                        <div class="beat-card ${currentBeatIndex === idx ? 'playing' : ''}" onclick="playBeat(${idx})">
+                            <div class="beat-left">
+                            <button class="play-btn-item" onclick="event.stopPropagation(); playBeat(${idx})">
+                                ${playIcon}
+                            </button>
+                            <div>
+                                <div class="beat-title">${b.beat_name}</div>
+                                <div class="beat-tags">
+                                <span class="beat-genre">${b.genre || 'Sin género'}</span>
+                                ${bpmScale}
+                                </div>
+                            </div>
+                            </div>
+                            <div class="buy-wrap">
+                            <div class="beat-price">${b.price || 'Consultar precio'}</div>
+                            <button class="buy-btn" onclick="event.stopPropagation(); openContactModal('${b.id}', '${b.beat_name.replace(/'/g, "\\'")}')">Comprar</button>
+                            </div>
+                        </div>
+                        `;
+            }).join("");
+        }
+
+        let modalBeatId = null;
+        let modalBeatName = null;
+        const WHATSAPP_NUMBER = "{{ whatsapp_number }}";
+        let whatsappUrl = "";
+
+        function openContactModal(beatId, beatName) {
+            modalBeatId = beatId;
+            modalBeatName = beatName;
+            document.getElementById('modal-beat-name').textContent = beatName;
+
+            const msg = encodeURIComponent(`Hola! Me interesa el beat "${beatName}", ¿me das info?`);
+            whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
+
+            document.getElementById('contact-form').classList.remove('open');
+            document.getElementById('lead-result').textContent = '';
+            document.getElementById('contact-modal').classList.add('open');
+        }
+
+        function openWhatsApp() {
+            const form = new FormData();
+            form.append('beat_id', modalBeatId);
+            form.append('name', 'Vía WhatsApp');
+            form.append('contact', 'N/A');
+            form.append('message', 'Dio clic en Escribir por WhatsApp');
+
+            fetch('/beats/interest', { method: 'POST', body: form }).catch(() => { });
+
+            window.open(whatsappUrl, '_blank');
+        }
+
+        function closeContactModal() {
+            document.getElementById('contact-modal').classList.remove('open');
+        }
+
+        function toggleContactForm() {
+            document.getElementById('contact-form').classList.toggle('open');
+        }
+
+        async function submitLead() {
+            const name = document.getElementById('lead-name').value;
+            const contact = document.getElementById('lead-contact').value;
+            const message = document.getElementById('lead-message').value;
+            const out = document.getElementById('lead-result');
+
+            if (!name || !contact) { out.textContent = "Falta tu nombre o un dato de contacto."; return; }
+
+            out.textContent = "Enviando...";
+            const form = new FormData();
+            form.append('beat_id', modalBeatId);
+            form.append('name', name);
+            form.append('contact', contact);
+            form.append('message', message);
+
+            const res = await fetch('/beats/interest', { method: 'POST', body: form });
+            if (res.ok) {
+                out.textContent = "¡Listo! Te contactaremos pronto.";
+                document.getElementById('lead-name').value = '';
+                document.getElementById('lead-contact').value = '';
+                document.getElementById('lead-message').value = '';
+            } else {
+                out.textContent = "Hubo un error, intenta de nuevo.";
+            }
+        }
+
+        async function loadPromo() {
+            try {
+                const res = await fetch('/promo');
+                const data = await res.json();
+                const banner = document.getElementById('promo-banner');
+                if (data.active) {
+                    document.getElementById('promo-title').textContent = data.title;
+                    document.getElementById('promo-subtitle').textContent = data.subtitle;
+                    banner.style.display = 'block';
+                } else {
+                    banner.style.display = 'none';
+                }
+            } catch (e) { /* silencioso */ }
+        }
+
+        loadBeats();
+        loadPromo();
+
+    </script>
 </body>
 
 </html>

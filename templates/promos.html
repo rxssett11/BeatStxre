@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="/assets/img/icon.svg">
+    <title>Videos Promo - BeatStxre</title>
+    <style>
+        :root { --red:#e50914; --red-dark:#9c060c; --bg:#0a0a0a; --panel:#161616; --panel-light:#1f1f1f; --border:#2a2a2a; --text:#eee; --text-dim:#999; }
+        * { box-sizing: border-box; }
+        body { font-family:'Segoe UI',sans-serif; background:var(--bg); color:var(--text); margin:0; }
+        #navbar { display:flex; align-items:center; justify-content:space-between; background:var(--panel); border-bottom:1px solid var(--border); padding:14px 24px; position:sticky; top:0; }
+        #navbar .nav-brand { color:var(--red); font-weight:bold; font-size:18px; }
+        #navbar .nav-links a { color:var(--text-dim); text-decoration:none; margin-left:20px; font-size:14px; padding:6px 12px; border-radius:6px; }
+        #navbar .nav-links a:hover, #navbar .nav-links a.active { color:#fff; background:var(--red); }
+        #main { max-width:1150px; margin:40px auto; padding:0 20px; }
+        h2 { color:var(--red); }
+        #genre-tabs { display:flex; gap:8px; margin-bottom:20px; }
+        .genre-tab { background:var(--panel-light); border:1px solid var(--border); color:var(--text-dim); padding:8px 16px; border-radius:20px; cursor:pointer; font-size:13px; font-weight:600; }
+        .genre-tab.active { background:var(--red); color:#fff; border-color:var(--red); }
+        #promo-gallery { display:grid; grid-template-columns:repeat(auto-fill, minmax(160px,1fr)); gap:14px; }
+        @media (max-width:640px){ #promo-gallery{ grid-template-columns:repeat(auto-fill, minmax(130px,1fr)) !important; gap:10px !important; } }
+        @media (max-width:400px){ #promo-gallery{ grid-template-columns:repeat(2,1fr) !important; } }
+    </style>
+</head>
+<body>
+    <div id="navbar">
+        <div class="nav-brand"><img src="/assets/img/logo.png" alt="Logo" style="height:28px;vertical-align:middle;"></div>
+        <div class="nav-links">
+            <a href="/">Herramientas</a>
+            <a href="/promos" class="active">Videos</a>
+            <a href="https://beatstxre.ismaelrxssett.cloud" target="_blank">Stxre</a>
+        </div>
+    </div>
+    <div id="main">
+        <h2>Videos promo</h2>
+        <div id="genre-tabs">
+            <button class="genre-tab active" data-genre="">Todos</button>
+            <button class="genre-tab" data-genre="Boom Bap">Boom Bap</button>
+            <button class="genre-tab" data-genre="Trap">Trap</button>
+            <button class="genre-tab" data-genre="Reggaeton">Reggaetón</button>
+        </div>
+        <div id="promo-gallery">Cargando...</div>
+    </div>
+    <script>
+        let allVideos = [];
+        async function loadPromoGallery() {
+            const container = document.getElementById('promo-gallery');
+            allVideos = await (await fetch('/promo-videos')).json();
+            renderGallery('');
+        }
+        function renderGallery(genreFilter) {
+            const container = document.getElementById('promo-gallery');
+            const videos = genreFilter ? allVideos.filter(v => v.genre === genreFilter) : allVideos;
+            if (!videos.length) { container.innerHTML = "<div style='color:#888;font-size:13px;'>Sin videos.</div>"; return; }
+            container.innerHTML = videos.map(v => `
+                <div style="background:var(--panel-light); border:1px solid var(--border); border-radius:8px; overflow:hidden;">
+                <video src="${v.url}" poster="${v.url.replace('.mp4','_poster.jpg')}" muted preload="metadata" style="width:100%; aspect-ratio:9/16; background:#000; object-fit:cover;" controls></video>
+                <div style="padding:8px 10px;">
+                    <div style="font-size:11px; color:var(--text-dim); margin:2px 0 8px;">${v.genre || 'Sin género'} · <span style="color:${v.style==='pulse'?'#e50914':'#4ec960'}">${v.style==='pulse'?'🔴 Pulse':'🌊 Waveform'}</span> · ${v.size_mb} MB</div>
+                    <div style="font-size:12px; font-weight:bold; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${v.beat_name}</div>
+                    <div style="font-size:11px; color:var(--text-dim); margin:2px 0 8px;">${v.genre || 'Sin género'} · ${v.size_mb} MB · ${v.date}</div>
+                    <a href="${v.url}" download style="display:block; text-align:center; background:var(--red); color:#fff; padding:6px; border-radius:5px; font-size:12px; font-weight:bold; text-decoration:none;">Descargar</a>
+                </div>
+                </div>
+            `).join("");
+        }
+        document.querySelectorAll('.genre-tab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.genre-tab').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderGallery(btn.dataset.genre);
+            });
+        });
+        loadPromoGallery();
+    </script>
+</body>
+</html>

@@ -4,5 +4,6 @@ services:
     volumes:
       - ./app.py:/app/app.py
       - ./db.py:/app/db.py
+      - ./generate_pulse.py:/app/generate_pulse.py
       - ./templates:/app/templates
       - ./assets:/app/assets

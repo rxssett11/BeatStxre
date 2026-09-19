@@ -19,8 +19,12 @@ from db import (
     init_db, db_get_beats, db_get_beat, db_insert_beat, db_update_beat_status,
     db_get_licenses, db_count_licenses, db_insert_license,
     db_get_history, db_insert_history, db_count_licenses_by_order_prefix,
-    db_update_beat, db_delete_beat, db_insert_lead, db_get_leads
+    db_update_beat, db_delete_beat, db_insert_lead, db_get_leads,
+    db_insert_tiktok_post, db_get_tiktok_posts, db_get_due_tiktok_posts,
+    db_get_published_tiktok_posts, db_update_tiktok_post, db_delete_tiktok_post,
+    db_get_promo, db_set_promo,
 )
+
 from fastapi import FastAPI, UploadFile, File, Form, Request, Response
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -30,6 +34,14 @@ from fastapi import BackgroundTasks
 import essentia.standard as es
 from basic_pitch.inference import predict_and_save
 from basic_pitch import ICASSP_2022_MODEL_PATH
+
+from generate_pulse import generate_promo_video_pulse
+
+
+from zoneinfo import ZoneInfo
+
+MEXICO_TZ = ZoneInfo("America/Mexico_City")
+
 
 load_dotenv()
 
@@ -73,6 +85,8 @@ PROMO_MAX_SECONDS = 60
 TIKTOK_CLIENT_KEY = os.getenv("TIKTOK_CLIENT_KEY", "")
 TIKTOK_CLIENT_SECRET = os.getenv("TIKTOK_CLIENT_SECRET", "")
 TIKTOK_REFRESH_TOKEN = os.getenv("TIKTOK_REFRESH_TOKEN", "")
+TIKTOK_DEFAULT_PRIVACY = os.getenv("TIKTOK_DEFAULT_PRIVACY", "SELF_ONLY")
+SCHEDULER_SECRET = os.getenv("SCHEDULER_SECRET", "") 
 
 
 def safe_genre_folder(genre: str) -> str:
@@ -464,6 +478,11 @@ def panel(request: Request):
     return templates.TemplateResponse(request=request, name="panel.html")
 
 
+@app.get("/promos", response_class=HTMLResponse)
+def promos_gallery(request: Request):
+    return templates.TemplateResponse(request=request, name="promos.html")
+
+
 @app.get("/history")
 def get_history():
     return db_get_history()
@@ -685,7 +704,6 @@ async def download_from_url(url: str = Form(...)):
   
   
 
-
 @app.post("/analyze")
 async def analyze_upload(file: UploadFile = File(...)):
     job_id = str(uuid.uuid4())[:8]
@@ -726,6 +744,7 @@ async def upload_beat(
     genre: str = Form(...),
     bpm: Optional[str] = Form(None),
     key_scale: Optional[str] = Form(None),
+    price: Optional[str] = Form(None),
     file: UploadFile = File(...),
 ):
     ext = Path(file.filename).suffix or ".wav"
@@ -758,6 +777,7 @@ async def upload_beat(
         "genre": genre_folder,
         "bpm": bpm_value,
         "key_scale": key_scale.strip() if key_scale else None,
+        "price": price.strip() if price else None,
         "filename": local_filename,
         "file": f"/beat-files/{genre_folder}/{local_filename}",
         "preview_file": preview_url,
@@ -770,8 +790,24 @@ async def upload_beat(
     promo_filename = re.sub(r"[^A-Za-z0-9_-]", "_", beat_name) + "_promo.mp4"
     promo_path = PROMO_DIR / promo_filename
     background_tasks.add_task(process_promo_and_distribute, local_path, promo_path, beat_name, bpm_value, key_scale.strip() if key_scale else None)
+
+    promo_pulse_filename = re.sub(r"[^A-Za-z0-9_-]", "_", beat_name) + "_promo_pulse.mp4"
+    promo_pulse_path = PROMO_DIR / promo_pulse_filename
+    background_tasks.add_task(
+        generate_promo_video_pulse, local_path, promo_pulse_path,
+        beat_name, bpm_value, key_scale.strip() if key_scale else None,
+    )
+    entry["promo_video_pulse"] = f"/promo-files/{promo_pulse_filename}"
     entry["promo_video"] = f"/promo-files/{promo_filename}"
     return entry
+
+
+def generate_poster(video_path: Path, poster_path: Path):
+    subprocess.run([
+        "ffmpeg", "-y", "-ss", "2", "-i", str(video_path),
+        "-frames:v", "1", "-update", "1", str(poster_path)
+    ], capture_output=True)
+  
   
   
 @app.put("/beats/{beat_id}")
@@ -781,6 +817,7 @@ def update_beat(
     genre: Optional[str] = Form(None),
     bpm: Optional[str] = Form(None),
     key_scale: Optional[str] = Form(None),
+    price: Optional[str] = Form(None),
 ):
     beat = db_get_beat(beat_id)
     if not beat:
@@ -825,6 +862,8 @@ def update_beat(
 
     if key_scale is not None:
         updates["key_scale"] = key_scale.strip() or None
+    if price is not None:
+        updates["price"] = price.strip() or None
 
     if not updates:
         return {"status": "ok", "changed": False}
@@ -869,17 +908,21 @@ def get_promo_videos():
     beats = db_get_beats(include_sold=True)
     match_by_filename = {}
     for b in beats:
-        fname = re.sub(r"[^A-Za-z0-9_-]", "_", b["beat_name"]) + "_promo.mp4"
-        match_by_filename[fname] = b
+        base = re.sub(r"[^A-Za-z0-9_-]", "_", b["beat_name"])
+        match_by_filename[f"{base}_promo.mp4"] = b
+        match_by_filename[f"{base}_promo_pulse.mp4"] = b
 
     results = []
-    for f in sorted(PROMO_DIR.glob("*_promo.mp4"), key=lambda p: p.stat().st_mtime, reverse=True):
+    for f in sorted(PROMO_DIR.glob("*_promo*.mp4"), key=lambda p: p.stat().st_mtime, reverse=True):
         beat = match_by_filename.get(f.name)
+        style = "pulse" if f.name.endswith("_promo_pulse.mp4") else "waveform"
+        beat_name_guess = f.stem.replace("_promo_pulse", "").replace("_promo", "").replace("_", " ")
         results.append({
             "filename": f.name,
             "url": f"/promo-files/{f.name}",
-            "beat_name": beat["beat_name"] if beat else f.stem.replace("_promo", "").replace("_", " "),
+            "beat_name": beat["beat_name"] if beat else beat_name_guess,
             "genre": beat.get("genre") if beat else None,
+            "style": style,
             "size_mb": round(f.stat().st_size / (1024 * 1024), 2),
             "date": datetime.fromtimestamp(f.stat().st_mtime).strftime("%Y-%m-%d %H:%M"),
         })
@@ -958,30 +1001,160 @@ async def distribute_to_tiktok(beat_id: str):
     return {"status": "ok", "message": "Video enviado a tu bandeja de TikTok, termina de publicarlo desde la app."}
 
 
-async def upload_video_to_tiktok_inbox(promo_path: Path):
-    access_token = await get_tiktok_access_token()
-    video_size = promo_path.stat().st_size
+@app.get("/tiktok/posts")
+def list_tiktok_posts():
+    return db_get_tiktok_posts()
 
-    async with httpx.AsyncClient(timeout=30.0) as client:
+
+@app.post("/tiktok/schedule")
+async def schedule_tiktok_post(
+    beat_id: str = Form(...),
+    video_type: str = Form("promo"),   # "promo" (waveform) o "promo_pulse"
+    caption: str = Form(""),
+    scheduled_at: str = Form(...),     # formato "YYYY-MM-DDTHH:MM" (input datetime-local)
+    privacy_level: str = Form(None),
+):
+    beat = db_get_beat(beat_id)
+    if not beat:
+        return JSONResponse(status_code=404, content={"error": "Beat no encontrado"})
+
+    suffix = "_promo_pulse.mp4" if video_type == "promo_pulse" else "_promo.mp4"
+    promo_filename = re.sub(r"[^A-Za-z0-9_-]", "_", beat["beat_name"]) + suffix
+    promo_path = PROMO_DIR / promo_filename
+    if not promo_path.exists():
+        return JSONResponse(status_code=400, content={"error": "El video promo aún no existe"})
+
+    try:
+        when_local = datetime.strptime(scheduled_at, "%Y-%m-%dT%H:%M").replace(tzinfo=MEXICO_TZ)
+        when = when_local.astimezone(ZoneInfo("UTC")).replace(tzinfo=None)
+    except ValueError:
+        return JSONResponse(status_code=400, content={"error": "Fecha inválida"})
+
+    post_id = db_insert_tiktok_post({
+        "beat_id": beat_id,
+        "beat_name": beat["beat_name"],
+        "video_path": str(promo_path),
+        "caption": caption,
+        "privacy_level": privacy_level or TIKTOK_DEFAULT_PRIVACY,
+        "scheduled_at": when,
+    })
+    return {"status": "ok", "id": post_id, "scheduled_at": scheduled_at}
+
+
+@app.delete("/tiktok/posts/{post_id}")
+def cancel_tiktok_post(post_id: int):
+    db_delete_tiktok_post(post_id)
+    return {"status": "ok"}
+
+
+@app.post("/tiktok/run-scheduler")
+async def run_tiktok_scheduler(secret: str = Form(...)):
+    """
+    Llamado por cron del host cada minuto. Publica lo que ya se venció.
+    """
+    if SCHEDULER_SECRET and secret != SCHEDULER_SECRET:
+        return JSONResponse(status_code=403, content={"error": "No autorizado"})
+
+    due = db_get_due_tiktok_posts(datetime.utcnow())
+    results = []
+    for post in due:
+        db_update_tiktok_post(post["id"], status="publicando")
+        try:
+            r = await tiktok_direct_post(Path(post["video_path"]), post["caption"], post["privacy_level"])
+            db_update_tiktok_post(
+                post["id"], status="publicado",
+                publish_id=r["publish_id"], published_at=datetime.utcnow(),
+            )
+            results.append({"id": post["id"], "status": "publicado"})
+        except Exception as e:
+            db_update_tiktok_post(post["id"], status="error", error_detail=str(e)[:500])
+            results.append({"id": post["id"], "status": "error", "detail": str(e)[:200]})
+
+    return {"checked": len(due), "results": results}
+
+
+@app.post("/tiktok/refresh-stats")
+async def refresh_tiktok_stats(secret: str = Form(...)):
+    """
+    Llamado por cron del host (ej. cada hora). Actualiza vistas/likes/comentarios
+    de todo lo publicado, y resuelve el tiktok_video_id si aún falta.
+    """
+    if SCHEDULER_SECRET and secret != SCHEDULER_SECRET:
+        return JSONResponse(status_code=403, content={"error": "No autorizado"})
+
+    posts = db_get_published_tiktok_posts()
+    updated = []
+    for post in posts:
+        video_id = post.get("tiktok_video_id")
+
+        if not video_id and post.get("publish_id"):
+            status_data = await tiktok_check_publish_status(post["publish_id"])
+            if status_data.get("status") == "PUBLISH_COMPLETE":
+                video_id = status_data.get("publicaly_available_post_id", [None])[0]
+                if video_id:
+                    db_update_tiktok_post(post["id"], tiktok_video_id=video_id)
+
+        if video_id:
+            stats = await tiktok_fetch_video_stats(video_id)
+            if stats:
+                db_update_tiktok_post(
+                    post["id"],
+                    views=stats.get("view_count", 0),
+                    likes=stats.get("like_count", 0),
+                    comments=stats.get("comment_count", 0),
+                    shares=stats.get("share_count", 0),
+                    stats_updated_at=datetime.utcnow(),
+                )
+                updated.append(post["id"])
+
+    return {"updated": updated}
+
+
+
+async def tiktok_direct_post(video_path: Path, caption: str, privacy_level: str) -> dict:
+    """
+    Publica directo al perfil (a diferencia del modo inbox). Devuelve publish_id.
+    El video queda visible en TikTok Studio web porque sí se publica de verdad
+    (aunque en SELF_ONLY mientras la app no pase el audit).
+    """
+    access_token = await get_tiktok_access_token()
+    video_size = video_path.stat().st_size
+
+    async with httpx.AsyncClient(timeout=60.0) as client:
         init_resp = await client.post(
-            "https://open.tiktokapis.com/v2/post/publish/inbox/video/init/",
+            "https://open.tiktokapis.com/v2/post/publish/video/init/",
             headers={"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"},
             json={
+                "post_info": {
+                    "title": caption or "",
+                    "privacy_level": privacy_level,
+                    "disable_duet": False,
+                    "disable_comment": False,
+                    "disable_stitch": False,
+                    "video_cover_timestamp_ms": 1000,
+                },
                 "source_info": {
                     "source": "FILE_UPLOAD",
                     "video_size": video_size,
                     "chunk_size": video_size,
                     "total_chunk_count": 1,
-                }
+                },
             },
         )
+        
         init_data = init_resp.json()
-        if "data" not in init_data:
-            raise RuntimeError(f"Fallo iniciando subida a TikTok: {init_data}")
 
+        error_info = init_data.get("error", {})
+        if error_info.get("code") not in (None, "ok"):
+            raise RuntimeError(f"TikTok rechazó la publicación: {error_info}")
+
+        if "data" not in init_data or "publish_id" not in init_data["data"]:
+            raise RuntimeError(f"Respuesta inesperada de TikTok: {init_data}")
+
+        publish_id = init_data["data"]["publish_id"]
         upload_url = init_data["data"]["upload_url"]
 
-        with open(promo_path, "rb") as f:
+        with open(video_path, "rb") as f:
             video_bytes = f.read()
 
         await client.put(
@@ -993,6 +1166,33 @@ async def upload_video_to_tiktok_inbox(promo_path: Path):
             content=video_bytes,
         )
 
+    return {"publish_id": publish_id}
+
+
+async def tiktok_check_publish_status(publish_id: str) -> dict:
+    access_token = await get_tiktok_access_token()
+    async with httpx.AsyncClient(timeout=15.0) as client:
+        resp = await client.post(
+            "https://open.tiktokapis.com/v2/post/publish/status/fetch/",
+            headers={"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"},
+            json={"publish_id": publish_id},
+        )
+        return resp.json().get("data", {})
+
+
+async def tiktok_fetch_video_stats(video_id: str) -> Optional[dict]:
+    access_token = await get_tiktok_access_token()
+    async with httpx.AsyncClient(timeout=15.0) as client:
+        resp = await client.post(
+            "https://open.tiktokapis.com/v2/video/query/?fields=id,view_count,like_count,comment_count,share_count",
+            headers={"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"},
+            json={"filters": {"video_ids": [video_id]}},
+        )
+        data = resp.json()
+        videos = data.get("data", {}).get("videos", [])
+        return videos[0] if videos else None
+    
+    
 
 def process_promo_and_distribute(source_path: Path, output_path: Path, beat_name: str,
                                   bpm: Optional[int], key_scale: Optional[str]):
@@ -1041,3 +1241,26 @@ def privacy_policy():
     <p><em>Última actualización: 2026.</em></p>
     </body></html>
     """
+    
+    
+    
+@app.get("/promo")
+def get_promo():
+    promo = db_get_promo()
+    if not promo or not promo.get("active"):
+        return {"active": False}
+    return {
+        "active": True,
+        "title": promo.get("title") or "",
+        "subtitle": promo.get("subtitle") or "",
+    }
+
+
+@app.post("/promo")
+def set_promo(
+    title: str = Form(""),
+    subtitle: str = Form(""),
+    active: str = Form("false"),
+):
+    db_set_promo(title, subtitle, active.lower() == "true")
+    return {"status": "ok"}
