@@ -1,31 +1,196 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="/assets/img/icon.svg">
     <title>Videos Promo - BeatStxre</title>
     <style>
-        :root { --red:#e50914; --red-dark:#9c060c; --bg:#0a0a0a; --panel:#161616; --panel-light:#1f1f1f; --border:#2a2a2a; --text:#eee; --text-dim:#999; }
-        * { box-sizing: border-box; }
-        body { font-family:'Segoe UI',sans-serif; background:var(--bg); color:var(--text); margin:0; }
-        #navbar { display:flex; align-items:center; justify-content:space-between; background:var(--panel); border-bottom:1px solid var(--border); padding:14px 24px; position:sticky; top:0; }
-        #navbar .nav-brand { color:var(--red); font-weight:bold; font-size:18px; }
-        #navbar .nav-links a { color:var(--text-dim); text-decoration:none; margin-left:20px; font-size:14px; padding:6px 12px; border-radius:6px; }
-        #navbar .nav-links a:hover, #navbar .nav-links a.active { color:#fff; background:var(--red); }
-        #main { max-width:1150px; margin:40px auto; padding:0 20px; }
-        h2 { color:var(--red); }
-        #genre-tabs { display:flex; gap:8px; margin-bottom:20px; }
-        .genre-tab { background:var(--panel-light); border:1px solid var(--border); color:var(--text-dim); padding:8px 16px; border-radius:20px; cursor:pointer; font-size:13px; font-weight:600; }
-        .genre-tab.active { background:var(--red); color:#fff; border-color:var(--red); }
-        #promo-gallery { display:grid; grid-template-columns:repeat(auto-fill, minmax(160px,1fr)); gap:14px; }
-        @media (max-width:640px){ #promo-gallery{ grid-template-columns:repeat(auto-fill, minmax(130px,1fr)) !important; gap:10px !important; } }
-        @media (max-width:400px){ #promo-gallery{ grid-template-columns:repeat(2,1fr) !important; } }
+        :root {
+            --red: #e50914;
+            --red-dark: #9c060c;
+            --bg: #0a0a0a;
+            --panel: #161616;
+            --panel-light: #1f1f1f;
+            --border: #2a2a2a;
+            --text: #eee;
+            --text-dim: #999;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+        }
+
+        #navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--panel);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 24px;
+            position: sticky;
+            top: 0;
+        }
+
+        #navbar .nav-brand {
+            color: var(--red);
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        #navbar .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 14px;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        #navbar .nav-links a:hover,
+        #navbar .nav-links a.active {
+            color: #fff;
+            background: var(--red);
+        }
+
+        #main {
+            max-width: 1150px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        h2 {
+            color: var(--red);
+        }
+
+        #genre-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .genre-tab {
+            background: var(--panel-light);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .genre-tab.active {
+            background: var(--red);
+            color: #fff;
+            border-color: var(--red);
+        }
+
+        #promo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 14px;
+        }
+
+        .promo-card {
+            position: relative;
+        }
+
+        .promo-checkbox {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            z-index: 5;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--red);
+        }
+
+        .promo-card.selected {
+            outline: 2px solid var(--red);
+        }
+
+        .sold-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            z-index: 5;
+            background: #9c060c;
+            color: #fff;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
+        }
+
+        #video-toolbar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-btn {
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--panel-light);
+            color: var(--text-dim);
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .toolbar-btn:hover {
+            color: #fff;
+            border-color: #444;
+        }
+
+        #delete-selected-btn {
+            background: var(--red);
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        #delete-selected-btn:hover {
+            background: var(--red-dark);
+        }
+
+        @media (max-width:640px) {
+            #promo-gallery {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important;
+                gap: 10px !important;
+            }
+        }
+
+        @media (max-width:400px) {
+            #promo-gallery {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
     </style>
 </head>
+
 <body>
     <div id="navbar">
-        <div class="nav-brand"><img src="/assets/img/logo.png" alt="Logo" style="height:28px;vertical-align:middle;"></div>
+        <div class="nav-brand"><img src="/assets/img/logo.png" alt="Logo" style="height:28px;vertical-align:middle;">
+        </div>
         <div class="nav-links">
             <a href="/">Herramientas</a>
             <a href="/promos" class="active">Videos</a>
@@ -40,31 +205,86 @@
             <button class="genre-tab" data-genre="Trap">Trap</button>
             <button class="genre-tab" data-genre="Reggaeton">Reggaetón</button>
         </div>
+        <div id="video-toolbar">
+            <button class="toolbar-btn" onclick="selectSoldVideos()">Seleccionar vendidos</button>
+            <button class="toolbar-btn" id="clear-selection-btn" style="display:none;"
+                onclick="clearSelection()">Cancelar selección</button>
+            <button id="delete-selected-btn" style="display:none;" onclick="deleteSelectedVideos()">
+                Eliminar seleccionados (<span id="selected-count">0</span>)
+            </button>
+        </div>
         <div id="promo-gallery">Cargando...</div>
     </div>
     <script>
         let allVideos = [];
+        let selectedFiles = new Set();
+
         async function loadPromoGallery() {
-            const container = document.getElementById('promo-gallery');
             allVideos = await (await fetch('/promo-videos')).json();
-            renderGallery('');
+            const activeTab = document.querySelector('.genre-tab.active');
+            renderGallery(activeTab ? activeTab.dataset.genre : '');
         }
+
         function renderGallery(genreFilter) {
             const container = document.getElementById('promo-gallery');
             const videos = genreFilter ? allVideos.filter(v => v.genre === genreFilter) : allVideos;
-            if (!videos.length) { container.innerHTML = "<div style='color:#888;font-size:13px;'>Sin videos.</div>"; return; }
+            if (!videos.length) { container.innerHTML = "<div style='color:#888;font-size:13px;'>Sin videos.</div>"; updateToolbar(); return; }
             container.innerHTML = videos.map(v => `
-                <div style="background:var(--panel-light); border:1px solid var(--border); border-radius:8px; overflow:hidden;">
-                <video src="${v.url}" poster="${v.url.replace('.mp4','_poster.jpg')}" muted preload="metadata" style="width:100%; aspect-ratio:9/16; background:#000; object-fit:cover;" controls></video>
-                <div style="padding:8px 10px;">
-                    <div style="font-size:11px; color:var(--text-dim); margin:2px 0 8px;">${v.genre || 'Sin género'} · <span style="color:${v.style==='pulse'?'#e50914':'#4ec960'}">${v.style==='pulse'?'🔴 Pulse':'🌊 Waveform'}</span> · ${v.size_mb} MB</div>
-                    <div style="font-size:12px; font-weight:bold; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${v.beat_name}</div>
-                    <div style="font-size:11px; color:var(--text-dim); margin:2px 0 8px;">${v.genre || 'Sin género'} · ${v.size_mb} MB · ${v.date}</div>
-                    <a href="${v.url}" download style="display:block; text-align:center; background:var(--red); color:#fff; padding:6px; border-radius:5px; font-size:12px; font-weight:bold; text-decoration:none;">Descargar</a>
-                </div>
-                </div>
-            `).join("");
+            <div class="promo-card ${selectedFiles.has(v.filename) ? 'selected' : ''}" style="background:var(--panel-light); border:1px solid var(--border); border-radius:8px; overflow:hidden;">
+            <input type="checkbox" class="promo-checkbox" ${selectedFiles.has(v.filename) ? 'checked' : ''} onclick="toggleSelect('${v.filename}', this)">
+            ${v.status === 'vendido' ? '<div class="sold-badge">Vendido</div>' : ''}
+            <video src="${v.url}" poster="${v.url.replace('.mp4', '_poster.jpg')}" muted preload="metadata" style="width:100%; aspect-ratio:9/16; background:#000; object-fit:cover;" controls></video>
+            <div style="padding:8px 10px;">
+                <div style="font-size:11px; color:var(--text-dim); margin:2px 0 8px;">${v.genre || 'Sin género'} · <span style="color:${v.style === 'pulse' ? '#e50914' : '#4ec960'}">${v.style === 'pulse' ? '🔴 Pulse' : '🌊 Waveform'}</span> · ${v.size_mb} MB</div>
+                <div style="font-size:12px; font-weight:bold; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${v.beat_name}</div>
+                <div style="font-size:11px; color:var(--text-dim); margin:2px 0 8px;">${v.genre || 'Sin género'} · ${v.size_mb} MB · ${v.date}</div>
+                <a href="${v.url}" download style="display:block; text-align:center; background:var(--red); color:#fff; padding:6px; border-radius:5px; font-size:12px; font-weight:bold; text-decoration:none;">Descargar</a>
+            </div>
+            </div>
+        `).join("");
+            updateToolbar();
         }
+
+        function toggleSelect(filename, checkbox) {
+            if (checkbox.checked) selectedFiles.add(filename);
+            else selectedFiles.delete(filename);
+            checkbox.closest('.promo-card').classList.toggle('selected', checkbox.checked);
+            updateToolbar();
+        }
+
+        function updateToolbar() {
+            const count = selectedFiles.size;
+            document.getElementById('selected-count').textContent = count;
+            document.getElementById('delete-selected-btn').style.display = count > 0 ? 'inline-block' : 'none';
+            document.getElementById('clear-selection-btn').style.display = count > 0 ? 'inline-block' : 'none';
+        }
+
+        function clearSelection() {
+            selectedFiles.clear();
+            const activeTab = document.querySelector('.genre-tab.active');
+            renderGallery(activeTab ? activeTab.dataset.genre : '');
+        }
+
+        function selectSoldVideos() {
+            allVideos.filter(v => v.status === 'vendido').forEach(v => selectedFiles.add(v.filename));
+            const activeTab = document.querySelector('.genre-tab.active');
+            renderGallery(activeTab ? activeTab.dataset.genre : '');
+        }
+
+        async function deleteSelectedVideos() {
+            if (!selectedFiles.size) return;
+            if (!confirm(`¿Eliminar ${selectedFiles.size} video(s) promo? Esto no se puede deshacer.`)) return;
+
+            const form = new FormData();
+            form.append('filenames', Array.from(selectedFiles).join(','));
+
+            const res = await fetch('/promo-videos/delete', { method: 'POST', body: form });
+            if (!res.ok) { alert('Error al eliminar los videos.'); return; }
+
+            selectedFiles.clear();
+            await loadPromoGallery();
+        }
+
         document.querySelectorAll('.genre-tab').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.genre-tab').forEach(b => b.classList.remove('active'));
@@ -72,7 +292,9 @@
                 renderGallery(btn.dataset.genre);
             });
         });
+
         loadPromoGallery();
     </script>
 </body>
+
 </html>

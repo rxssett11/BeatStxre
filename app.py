@@ -920,14 +920,32 @@ def get_promo_videos():
         results.append({
             "filename": f.name,
             "url": f"/promo-files/{f.name}",
+            "beat_id": beat.get("id") if beat else None,
             "beat_name": beat["beat_name"] if beat else beat_name_guess,
             "genre": beat.get("genre") if beat else None,
+            "status": beat.get("status") if beat else None,   # <-- nuevo
             "style": style,
             "size_mb": round(f.stat().st_size / (1024 * 1024), 2),
             "date": datetime.fromtimestamp(f.stat().st_mtime).strftime("%Y-%m-%d %H:%M"),
         })
     return results
 
+
+@app.post("/promo-videos/delete")
+def delete_promo_videos(filenames: str = Form(...)):
+    deleted, skipped = [], []
+    for raw_name in filenames.split(","):
+        name = raw_name.strip()
+        if not name:
+            continue
+        safe_name = Path(name).name  # evita path traversal (../../etc)
+        path = PROMO_DIR / safe_name
+        if path.exists() and path.is_file():
+            path.unlink()
+            deleted.append(safe_name)
+        else:
+            skipped.append(safe_name)
+    return {"status": "ok", "deleted": deleted, "skipped": skipped}
 
 #----- TIKTOK ----
 
